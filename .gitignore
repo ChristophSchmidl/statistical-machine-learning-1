@@ -25,3 +25,5 @@
 
 # Mac
 .DS_Store
+*.spyderworkspace
+assignment-1/.spyderproject
