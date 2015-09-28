@@ -2,13 +2,22 @@
 # Inez Wijnando s4149696 
 # Guido Zuidhof s4160703
 # SML ASS 1
+from __future__ import division
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-import scipy.optimize
+
 
 def f(x):
     return 1 + math.sin(8*x + 1)
+
+# A-matrix
+def Aij(i,j,x):
+    return np.sum(x[n]**(i+j) for n in xrange(len(x)))
+    
+# T-matrix
+def Ti(i,t,x):
+    return np.sum(t[n]*(x[n]**i) for n in xrange(len(x)))
 
 def createNoise(n):
     return np.random.normal(0,0.3,n)
@@ -25,24 +34,12 @@ def PolCurFit(D,M):
     
     x = D[0]
     t = D[1]
-    N = len(x)
     
-    def sum_sq_error(w):
-        _sum = 0
-        
-        for n in xrange(N):
-            _sum +=  (poly_y(x[n],w)-t[n])**2
-            
-        _sum = 0.5 * _sum
-        return _sum
+    M = M + 1
     
-    w0 = np.zeros((M+1,))
-        
-    
-    result = scipy.optimize.minimize(sum_sq_error, w0)
-    
-    return result.x, result.fun
-    
+    A = np.array([[Aij(i,j,x) for j in xrange(M)] for i in xrange(M)])
+    T = np.array([Ti(i,t,x) for i in xrange(M)])
+    return np.linalg.solve(A,T)
 
 def poly_y(x,w):
     y = 0.0
@@ -51,30 +48,55 @@ def poly_y(x,w):
         y += w[i]* (x**i)
         
     return y
-    
-    
 
+def root_mean_square_error(x,t,w):  
+    return np.sqrt(2*sum_sq_error(x,t,w)/len(x))
+
+def sum_sq_error(x,t,w):
+        _sum = 0
+        
+        for n in xrange(len(x)):
+            _sum +=  (poly_y(x[n],w)-t[n])**2
+            
+        _sum = 0.5 * _sum
+        return _sum
+        
+        
+        
+
+def run(data_n = 10):
+    D = createData(data_n)
+    
+    plt.close()
+    plt.plot(D[0], D[1], 'r+', label='D'+str(data_n))
+    
+    # 1000 points between 0 and 1 (x)
+    x_1000 =   np.linspace(0,1,num = 1000)  
+    
+    plt.plot(x_1000,[f(x) for x in x_1000], 'b',  label='f(x)')
+    
+      
+    for M,color in zip([1,3,9],['r','y','g']):
+        weights= PolCurFit(D,M)
+        
+        plt.plot(x_1000,[poly_y(x,weights) for x in x_1000], color, label='M('+str(M)+')')
+        
+    plt.legend(loc='lower right',ncol=2)
+    plt.show()
+    
+    errors = []  
+    Ms = range(1,11)
+    
+    for M in Ms:
+        weights= PolCurFit(D,M)
+        error = root_mean_square_error(D[0],D[1],weights)
+        errors.append(error)
+    plt.plot(Ms, errors) 
+    
 
 
 if __name__ == "__main__":
-    np.random.seed(1337)
-    D = createData()
-    
-    plt.close()
-    plt.plot(D[0], D[1], 'r+')
-    
-    plt.plot(np.linspace(0,1,num = 1000),[f(x) for x in np.linspace(0,1,num = 1000)], 'b')
-    
-    
-    T = createData(100)
-    
- 
-    
-    weights, err = PolCurFit(D,9)
-    print weights, "\nError: ",err
-    
-    plt.plot(np.linspace(0,1,num = 1000),[poly_y(x,weights) for x in np.linspace(0,1,num = 1000)], 'g')
-    plt.show()
-    
+    np.random.seed(25)
+    run(10)
     
     
