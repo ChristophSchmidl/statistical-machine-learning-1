@@ -97,6 +97,7 @@ def run(data_n = 10):
     errorsTest = []
     Ms = range(1,11)
     
+    
     for M in Ms:
         weights= PolCurFit(D,M)
         error = root_mean_square_error(D[0],D[1],weights)
@@ -124,6 +125,10 @@ def run_with_regularization():
     
     errors = []  
     errorsTest = []
+    
+    weight7 = []
+    weight8 = []
+    weight9 = []
 
     for l in _lambdas:
         weights= PolCurFit(D,9,l)
@@ -133,6 +138,10 @@ def run_with_regularization():
         
         errors.append(error)
         errorsTest.append(errorTest)
+        weight7.append(weights[6])
+        weight8.append(weights[7])
+        weight9.append(weights[8])
+        
         
     plt.xlabel('$ln \lambda$')
     plt.ylabel('$E_{RMS}$')
@@ -141,6 +150,18 @@ def run_with_regularization():
     plt.plot(np.log(_lambdas), errorsTest, label='$\mathcal{T}$') 
     
     plt.savefig('1_5.png')
+    plt.close()
+    
+    
+    plt.xlabel('$ln \lambda$')
+    plt.ylabel('$Weight value$')
+    
+    plt.plot(np.log(_lambdas), weight7, label='$w7$')
+    plt.plot(np.log(_lambdas), weight8, label='$w8$')
+    plt.plot(np.log(_lambdas), weight9, label='$w9$')
+    plt.legend(loc='upper right',ncol=2)
+    plt.savefig('1_5_2.png')
+    
     
 if __name__ == "__main__":
     np.random.seed(25)
