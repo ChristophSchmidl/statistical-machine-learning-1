@@ -123,6 +123,13 @@ def PolCurFit(D,M):
     A = np.array([[Aij(i,j,x) for j in xrange(M)] for i in xrange(M)])
     T = np.array([Ti(i,t,x) for i in xrange(M)])
     return np.linalg.solve(A,T)
+
+# A-matrix
+def Aij(i,j,x):
+    return np.sum(x[n]**(i+j) for n in xrange(len(x)))
+# T-vector
+def Ti(i,t,x):
+    return np.sum(t[n]*(x[n]**i) for n in xrange(len(x)))
 		\end{lstlisting}
 	\item See Figure 2 \& 3 \vspace{-0.2cm}
 		\begin{figure}[h]
@@ -169,7 +176,8 @@ def PolCurFit(D,M, _lambda=0):
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[scale=0.8]{1_5.png}\vspace{-0.5cm}
-			\caption{For $M = 9$, we calculated the root-mean-squared error for the training set $\mathcal{D}$ and the testset $\mathcal{T}$. You can see that the root-mean-squared error increases for larger $\lambda$ for $\mathcal{D}$ and first decreases and later increases for $\mathcal{T}$. You try to minimize both the error and the sum of the weights, and these weights are regularized by $\lambda$. If your $\lambda$ is very high, the weights become smaller to minimize the sum of the error plus the $\lambda$ times the weights. For a large order polynomial (such as $M = 9$ as in this plot, the weights have to be quite high to pass all the data points in the training set as close as possible. This is however noisy data, with few observations. But for larger $\lambda$, you lower the weights, and thus the error will increase. (similar to Bishop, Fig.1.8)}
+			\caption{For $M = 9$, we calculated the root-mean-squared error for the training set $\mathcal{D}$ and the testset $\mathcal{T}$. You can see that the root-mean-squared error increases for larger $\lambda$ for $\mathcal{D}$ and first decreases and later increases for $\mathcal{T}$. You try to minimize both the error and the sum of the weights, and these weights are regularized by $\lambda$. If your $\lambda$ is very high, the weights become smaller to minimize the sum of the error plus the $\lambda$ times the weights. For a large order polynomial (such as $M = 9$ as in this plot), the weights have to be quite high to pass all the data points in the training set as close as possible. This is however noisy data, with few observations. But for larger $\lambda$, you lower the weights, and thus the error will increase on the training set. (similar to Bishop, Fig.1.8).\\\\
+For the error on the test set you can see that it first decreases, this is due to a reduction of overfit. Later, it increases again as the weights are too low to capture the original function.}
 		\end{figure}
 		\begin{figure}[h!]
 			\centering
@@ -295,6 +303,7 @@ Since again the probability for the boxes is both $\frac{1}{2}$, the probability
 $P(F_1 == Apple) = P(F_1 == Apple)$ initially $= \frac{1}{4}$\\
 \\
 The probability of grabbing an apple is not different when you know that you have grabbed a grapefruit, because having grabbed a grapefruit does not give you more knowledge about which box you grabbed from, both are still $P = 0.5$. When you do not have more knowledge about which box you grabbed from, you cannot use the probability for grabbing an apple, given that you know the box, so it is the same as the prior probability for grabbing an apple.\\
-However, this does not mean that the first and second piece of fruit you grab are independent. In the case of grabbing a grapefruit, yes, because in box 1 there are 24 pieces of fruit, of which 4 grapefruits, and thus $P = \frac{1}{6}$, and in box 2 there are 18 pieces of fruit, of which 3 grapefruits, thus also  $P = \frac{1}{6}$, but when you grabbed an orange for instance, you know with 100\% certainty that you grabbed from box 1 since there are no oranges in box 2, and when you grabbed an apple, this also makes one box more likely than the other, because the distribution over the boxes is also different for apples. Thus, the two picks are still dependent.
+
+However, this does not mean that the first and second piece of fruit you grab are independent. In the case of grabbing a grapefruit, it seems independent, because in box 1 there are 24 pieces of fruit, of which 4 grapefruits, and thus $P = \frac{1}{6}$, and in box 2 there are 18 pieces of fruit, of which 3 grapefruits, thus also  $P = \frac{1}{6}$. But, when you grabbed an orange instead of a grapefruit, you know with 100\% certainty that you grabbed from box 1 since there are no oranges in box 2. When you grabbed an apple, this also makes one box more likely than the other, because the distribution over the boxes is also different for apples. Thus, the two picks are still dependent.
 \end{enumerate}
 \end{document}
