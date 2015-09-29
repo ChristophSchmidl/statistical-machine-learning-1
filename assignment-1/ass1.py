@@ -30,7 +30,7 @@ def createData(n=10):
     D = np.vstack((X,Y))
     return D
     
-def PolCurFit(D,M):
+def PolCurFit(D,M, _lambda=0):
     
     x = D[0]
     t = D[1]
@@ -38,6 +38,10 @@ def PolCurFit(D,M):
     M = M + 1
     
     A = np.array([[Aij(i,j,x) for j in xrange(M)] for i in xrange(M)])
+    
+    #Ridge Regression
+    A = A + _lambda * np.identity(len(A))    
+    
     T = np.array([Ti(i,t,x) for i in xrange(M)])
     return np.linalg.solve(A,T)
 
@@ -109,10 +113,39 @@ def run(data_n = 10):
     plt.legend(loc='upper left',ncol=2)
     plt.savefig('1_3_{0}.png'.format(data_n))
     
-    
 
+def run_with_regularization():
+    plt.close()
+    D = createData(10)
+    T = createData(100)
+    
+    lambdas = range(-3,16)
+    _lambdas = [10**-l for l in lambdas]
+    
+    errors = []  
+    errorsTest = []
+
+    for l in _lambdas:
+        weights= PolCurFit(D,9,l)
+        
+        error = root_mean_square_error(D[0],D[1],weights)
+        errorTest = root_mean_square_error(T[0],T[1],weights)
+        
+        errors.append(error)
+        errorsTest.append(errorTest)
+        
+    plt.xlabel('$ln \lambda$')
+    plt.ylabel('$E_{RMS}$')
+    
+    plt.plot(np.log(_lambdas), errors, label='$\mathcal{D}$') 
+    plt.plot(np.log(_lambdas), errorsTest, label='$\mathcal{T}$') 
+    
+    plt.savefig('1_5.png')
+    
 if __name__ == "__main__":
     np.random.seed(25)
-    run(40)
+    #run(40)
+    
+    run_with_regularization()
     
     
