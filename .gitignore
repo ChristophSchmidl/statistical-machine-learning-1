@@ -1,4 +1,4 @@
-# Matlab
+# LaTeX
 *.aux
 *.glo
 *.idx
@@ -25,5 +25,7 @@
 
 # Mac
 .DS_Store
+
+# Python
 *.spyderworkspace
 assignment-1/.spyderproject
