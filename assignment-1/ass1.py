@@ -86,7 +86,7 @@ def run(data_n = 10):
         plt.plot(x_1000,[poly_y(x,weights) for x in x_1000], color, label='M('+str(M)+')')
     
     plt.legend(loc='upper right',ncol=2)
-    plt.savefig('1_2.png')
+    plt.savefig('1_2_{0}.png'.format(data_n))
     plt.show()
     
     errors = []  
@@ -107,12 +107,12 @@ def run(data_n = 10):
     plt.plot(Ms, errors, label='$\mathcal{D}$') 
     plt.plot(Ms, errorsTest, label='$\mathcal{T}$') 
     plt.legend(loc='upper left',ncol=2)
-    plt.savefig('1_3.png')
+    plt.savefig('1_3_{0}.png'.format(data_n))
     
     
 
 if __name__ == "__main__":
     np.random.seed(25)
-    run(10)
+    run(40)
     
     
