@@ -61,39 +61,55 @@ def sum_sq_error(x,t,w):
         _sum = 0.5 * _sum
         return _sum
         
-        
-        
 
 def run(data_n = 10):
     D = createData(data_n)
     
     plt.close()
-    plt.plot(D[0], D[1], 'r+', label='D'+str(data_n))
+    plt.plot(D[0], D[1], 'r+', label='D'+str(data_n), markersize=10)
     
     # 1000 points between 0 and 1 (x)
     x_1000 =   np.linspace(0,1,num = 1000)  
     
     plt.plot(x_1000,[f(x) for x in x_1000], 'b',  label='f(x)')
     
-      
+    plt.xlabel('x')
+    plt.ylabel('t')
+        
+    
+    
+    T = createData(100)    
+    
     for M,color in zip([1,3,9],['r','y','g']):
         weights= PolCurFit(D,M)
         
         plt.plot(x_1000,[poly_y(x,weights) for x in x_1000], color, label='M('+str(M)+')')
-        
-    plt.legend(loc='lower right',ncol=2)
+    
+    plt.legend(loc='upper right',ncol=2)
+    plt.savefig('1_2.png')
     plt.show()
     
     errors = []  
+    errorsTest = []
     Ms = range(1,11)
     
     for M in Ms:
         weights= PolCurFit(D,M)
         error = root_mean_square_error(D[0],D[1],weights)
+        errorTest = root_mean_square_error(T[0],T[1],weights)
+        
         errors.append(error)
-    plt.plot(Ms, errors) 
+        errorsTest.append(errorTest)
+        
+    plt.xlabel('$M$')
+    plt.ylabel('$E_{RMS}$')
+        
+    plt.plot(Ms, errors, label='$\mathcal{D}$') 
+    plt.plot(Ms, errorsTest, label='$\mathcal{T}$') 
+    plt.legend(loc='upper left',ncol=2)
+    plt.savefig('1_3.png')
     
-
+    
 
 if __name__ == "__main__":
     np.random.seed(25)
