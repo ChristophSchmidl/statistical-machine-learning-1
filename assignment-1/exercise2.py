@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 # Inez Wijnando s4149696 
 # Guido Zuidhof s4160703
-# SML ASS 1
+# SML ASS 1 exercise2.py
+
 from __future__ import division
 import numpy as np
 
 import matplotlib.pyplot as plt
 from matplotlib import cm
-
 
 
 def h(x,y):
@@ -17,9 +17,11 @@ def h(x,y):
 def h_dx(x,y):
     return - 400 * (x*y) + 400*(x**3) + 2*x - 2
     
+#Derivative y
 def h_dy(x,y):
     return 200*y - 200 * (x**2)
-    
+
+# Gradient descent
 def sgd(x=-2,y=2, eta=0.001, max_iteration=500000):
     
     iteration = 0
@@ -41,7 +43,7 @@ def sgd(x=-2,y=2, eta=0.001, max_iteration=500000):
         y_coords.append(y)
         
         
-        
+        #Converged? break
         if np.abs(step_x) < eta*(10**-5) and np.abs(step_y) < eta*(10**-5):
             break
     
@@ -51,7 +53,6 @@ def sgd(x=-2,y=2, eta=0.001, max_iteration=500000):
 
 
 if __name__ == "__main__":
-    
     
     etas = [0.001, 0.0001, 0.00001]    
     
@@ -77,13 +78,12 @@ if __name__ == "__main__":
         
         ax.view_init(elev=90, azim=50)
         
-        
         max_iter = 10000000
         x_coords, y_coords, iterations = sgd(eta=eta, max_iteration = max_iter)
         
         converged = 'n' if max_iter == iterations else 'y'
         
-        
+        #Plot trajectory
         z_coords = [h(x,y) for x,y in zip(x_coords,y_coords)]
         ax.plot(x_coords, y_coords, z_coords,  color='#FFFF00')    
         
