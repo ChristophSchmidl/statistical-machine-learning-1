@@ -125,12 +125,12 @@ bindingoffset=0mm, top=20mm,bottom=20mm}
 		\end{align}\\\\
 		Using the precision matrix $\boldsymbol{\tilde \Lambda}$ we can use equations 2.69, 2.73 and 2.75 from Bishop to obtain the mean and covariance of the conditional distribution $p([x_1,x_2]^T|x_3 = x_4 = 0)$.\\
 		\begin{align}
-			\boldsymbol{\Sigma}_p &= \boldsymbol \Lambda_{aa}^{-1} \tag{2.73 from Bishop}\\
+			\boldsymbol{\Sigma}_p &= \boldsymbol \Lambda_{aa}^{-1} \tag{Bishop 2.73}\\
 			\boldsymbol \Lambda_{aa} &= \begin{pmatrix} 60 & 50 \\ 50 & 50 \end{pmatrix}\\
 			\boldsymbol{\Sigma}_p &= \begin{pmatrix} 0.1 & -0.1 \\ -0.1 & 0.12 \end{pmatrix}
 		\end{align}
 		\begin{align}
-			\boldsymbol{\mu}_p = \boldsymbol{\mu}_{a | b} = \boldsymbol{\mu}_a - \boldsymbol{\Lambda}_{aa}^{-1}\boldsymbol{\Lambda}_{ab}(\boldsymbol{x}_b - \boldsymbol{\mu}_b) \tag{2.75 from Bishop}
+			\boldsymbol{\mu}_p = \boldsymbol{\mu}_{a | b} = \boldsymbol{\mu}_a - \boldsymbol{\Lambda}_{aa}^{-1}\boldsymbol{\Lambda}_{ab}(\boldsymbol{x}_b - \boldsymbol{\mu}_b) \tag{Bishop 2.75}
 		\end{align}
 		We can fill in this equation, since $\boldsymbol {\tilde \mu}$ and $\boldsymbol x_b$ (the second partition of $\boldsymbol x$) are known.
 		\begin{align}
@@ -162,12 +162,73 @@ bindingoffset=0mm, top=20mm,bottom=20mm}
    			\caption{\vspace{-0.2cm} The probability density of the distribution.}
   		\end{figure}
 \end{enumerate}
+
 \subsection{Generating the data}
 \begin{enumerate}
-	\item
+	\item We used the following function to generate our data:
+	\begin{verbatim}
+		np.random.multivariate_normal(mu_t, sigma_t, 1000)
+	\end{verbatim}
+	\item \begin{align}\boldsymbol{\mu}_{ML} &= \frac{1}{N}  \sum_{n=1}^{N} \boldsymbol{x}_n \tag{Bishop 2.121}\\ 
+	&= [\frac{1}{1000}  \sum_{n=1}^{1000} \boldsymbol{x}_n, \frac{1}{1000}  \sum_{n=1}^{1000} \boldsymbol{y}_n]\\
+	&= \begin{pmatrix}
+0.25383138\\
+1.38260838
+\end{pmatrix}
+		\end{align}
+		\begin{align}
+		\boldsymbol{\Sigma}_{ML} &= \frac{1}{N} \sum_{n=1}^{N} (\boldsymbol{x}_n - \boldsymbol{\mu}_{ML})(\boldsymbol{x}_n - \boldsymbol{\mu}_{ML})^T \tag{Bishop 1.22}\\
+		&= \begin{pmatrix}
+\frac{1}{1000} \sum_{n=1}^{1000} (\boldsymbol{x}_n - \boldsymbol{\mu}_{ML}(1))(\boldsymbol{x}_n - \boldsymbol{\mu}_{ML}(1))^T & \frac{1}{1000} \sum_{n=1}^{1000} (\boldsymbol{x}_n - \boldsymbol{\mu}_{ML}(1))(\boldsymbol{y}_n - \boldsymbol{\mu}_{ML}(2))^T\\
+\frac{1}{1000} \sum_{n=1}^{1000} (\boldsymbol{y}_n - \boldsymbol{\mu}_{ML}(2))(\boldsymbol{x}_n - \boldsymbol{\mu}_{ML}(1))^T & \frac{1}{1000} \sum_{n=1}^{1000} (\boldsymbol{y}_n - \boldsymbol{\mu}_{ML}(2))(\boldsymbol{y}_n - \boldsymbol{\mu}_{ML}(2))^T
+\end{pmatrix}\\
+		&= \begin{pmatrix}
+1.90513804 & 0.72479489\\
+0.72479489 & 3.81690496
+\end{pmatrix}
+		\end{align}
+		This is calculated using the following code:
+		\begin{verbatim}
+		mu_ml = sum(data)/len(data)
+
+sse = [0,0]
+for point in data:
+        	point = np.matrix(point)
+        	sse += (point-mu_ml).T*(point-mu_ml)
+sigma_ml =  sse/len(data)
+    		\end{verbatim}
+    		The differences with the 'true' values are:
+    		\begin{align}
+    		\boldsymbol \mu_t - \boldsymbol \mu_{ML} &= \begin{pmatrix} 0.28584241 \\ 1.42626702\end{pmatrix} - \begin{pmatrix} 0.25383138\\ 1.38260838 \end{pmatrix} = \begin{pmatrix} 0.03201103\\ 0.04365864 \end{pmatrix}\\
+    		\boldsymbol \Sigma_t - \boldsymbol \Sigma_{ML} &= \begin{pmatrix} 2.0 & 0.8\\ 0.8 & 4.0 \end{pmatrix} - \begin{pmatrix} 1.90513804 & 0.72479489\\ 0.72479489 & 3.81690496 \end{pmatrix} = \begin{pmatrix} 0.09486196 & 0.07520511\\ 0.07520511 & 0.18309504 \end{pmatrix}
+		\end{align}
 \end{enumerate}
+
 \subsection{Sequential learning algorithms}
 \begin{enumerate}
+	\item
+	\item \begin{equation}p(\boldsymbol{x} | D_{n-1}) = \mathcal{N}(\boldsymbol{x} | \boldsymbol{\mu}, \boldsymbol{\Lambda}^{-1}) \tag{Bishop 2.113}
+		\end{equation}
+where: $\boldsymbol{x} = \boldsymbol{\mu}, \boldsymbol{\mu} = \boldsymbol{\mu}_{(n-1)}, \boldsymbol{\Lambda}^{-1} = \boldsymbol{\Sigma}_{(n-1)}$
+		\begin{equation}p(\boldsymbol{y} | \boldsymbol{x}) = \mathcal{N}(\boldsymbol{y} | \boldsymbol{Ax} + \boldsymbol{b}, \boldsymbol{L}^{-1}) \tag{Bishop 2.114}
+		\end{equation}
+where $\boldsymbol{y} = \boldsymbol{x}_n, \boldsymbol{A} = \boldsymbol{I}, \boldsymbol{x} = \boldsymbol{\mu}, \boldsymbol{b} = 0, \boldsymbol{L}^{-1} = \boldsymbol{\Sigma}^t$
+		\begin{align} p(\boldsymbol{x} | \boldsymbol y) &= \mathcal{N}(\boldsymbol{x} | \boldsymbol{\Sigma} \{ \boldsymbol{A}^T \boldsymbol{L}(\boldsymbol{y} - \boldsymbol{b}) + \boldsymbol{\Lambda\mu}\}, \boldsymbol{\Sigma}) \tag{Bishop 2.116}\\
+	 	\boldsymbol{\Sigma} &= (\boldsymbol{\Lambda} + \boldsymbol{A}^T\boldsymbol{LA})^{-1} \tag{Bishop 2.117}
+	 	\end{align}
+		Matching the variables we get the following equations:
+		\begin{align}
+			p(\boldsymbol{\mu} | \boldsymbol{x}_n) &= \mathcal{N}(\boldsymbol{\mu} | \boldsymbol S \{ \boldsymbol{I}^T \boldsymbol{\Sigma}_t^{-1}(\boldsymbol{x}_n - 0) + \boldsymbol{\Sigma}_{(n-1)}^{-1}\}, \boldsymbol S)\\
+			&= \mathcal{N}(\boldsymbol{\mu} | \boldsymbol S \{ \boldsymbol{I}^T \boldsymbol{\Sigma}_t^{-1} \boldsymbol{x}_n + \boldsymbol{\Sigma}_{(n-1)}^{-1}\}, \boldsymbol S)\\
+			 &= \mathcal{N}(\boldsymbol{\mu} | \boldsymbol S \{ \boldsymbol{\Sigma}_t^{-1} \boldsymbol{x}_n + \boldsymbol{\Sigma}_{(n-1)}^{-1}\}, \boldsymbol S)\\
+			\boldsymbol{S} &= (\boldsymbol{\Sigma}_{(n-1)}^{-1} + \boldsymbol{I}^T \boldsymbol{\Sigma}_t^{-1} \boldsymbol{I})^{-1}\\
+			&= (\boldsymbol{\Sigma}_{(n-1)}^{-1} + \boldsymbol{\Sigma}_t^{-1})^{-1}
+		\end{align}
+		$\boldsymbol \mu_n$ is the mean of the distribution $p(\boldsymbol \mu | \boldsymbol x_n)$, so the functions we use for our sequential learning algorithm are:
+		\begin{align}
+			\boldsymbol \Sigma_n &= \boldsymbol S\\
+			\boldsymbol \mu_n &= \boldsymbol \Sigma_n \{ \boldsymbol \Sigma_t^{-1} \boldsymbol x_n + \boldsymbol{\Sigma}_{n-1}^{-1}\}, \boldsymbol \Sigma_n)
+		\end{align}
 	\item
 	\item
 \end{enumerate}
@@ -180,11 +241,13 @@ bindingoffset=0mm, top=20mm,bottom=20mm}
 	\item
 	\item
 \end{enumerate}
+
 \subsection{Generate the lighthouse data}
 \begin{enumerate}
 	\item
 	\item 
 \end{enumerate}
+
 \subsection{Find the lighthouse}
 \begin{enumerate}
 	\item
