@@ -14,7 +14,7 @@ from scipy.stats import multivariate_normal
 
 def surf_plot(mu_p, sigma_p):
 
-    x,y = np.meshgrid(np.linspace(-0.5,2,250), np.linspace(-0.5,2,250))
+    x,y = np.meshgrid(np.linspace(-0.5,2,300), np.linspace(-0.5,2,300))
     pos = np.empty(x.shape + (2,))
     pos[:, :, 0] = x; pos[:, :, 1] = y
     var = multivariate_normal(mean = np.array(mu_p).flatten(), cov = sigma_p)
@@ -23,7 +23,7 @@ def surf_plot(mu_p, sigma_p):
     ax = fig.add_subplot(111, projection='3d')
     ax.view_init(elev=35,azim=60)
 
-    ax.plot_surface(x,y, var.pdf(pos),cmap=cm.rainbow)
+    ax.plot_surface(x,y, var.pdf(pos),cmap=cm.jet, linewidth=0.35,rstride=5, cstride=5)
 
 def calculate_prior():
 
