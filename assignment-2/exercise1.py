@@ -32,14 +32,14 @@ def calculate_prior():
     mu = np.matrix('1; 0; 1; 2')
     sigma_p = np.linalg.inv(labda[0:2,0:2])
     mu_p = mu[0:2] - sigma_p * labda[0:2,2:4] * (np.matrix('0;0') - mu[2:4])
+    
+    surf_plot(mu_p, sigma_p)
 
     return mu_p, sigma_p
 
 def generate_data(mu_p, sigma_p):
 
     mu_t = np.random.multivariate_normal(np.array(mu_p).flatten(), sigma_p)
-
-    surf_plot(mu_p, sigma_p)
 
     sigma_t = np.matrix([[2.0,0.8],[0.8,4.0]])
 
