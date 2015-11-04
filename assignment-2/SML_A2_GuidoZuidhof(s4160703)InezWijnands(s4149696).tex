@@ -75,8 +75,8 @@ bindingoffset=0mm, top=20mm,bottom=20mm}
 \lstset{
     language=Python,
     basicstyle=\ttfamily\small,
-    aboveskip={1.0\baselineskip},
-    belowskip={1.0\baselineskip},
+    aboveskip={0.9\baselineskip},
+    belowskip={0.9\baselineskip},
     columns=fixed,
     extendedchars=true,
     breaklines=true,
@@ -86,9 +86,9 @@ bindingoffset=0mm, top=20mm,bottom=20mm}
     showtabs=false,
     showspaces=false,
     showstringspaces=false,
-    keywordstyle=\color[rgb]{0.627,0.126,0.941},
+    keywordstyle=\color[rgb]{0.1,0.126,0.941},
     commentstyle=\color[rgb]{0.133,0.545,0.133},
-    stringstyle=\color[rgb]{01,0,0},
+    stringstyle=\color[rgb]{0,0.5,0},
     numbers=left,
     numberstyle=\scriptsize\ttfamily,
     stepnumber=1,
@@ -179,34 +179,64 @@ bindingoffset=0mm, top=20mm,bottom=20mm}
 		\begin{align}
 		\boldsymbol{\Sigma}_{ML} &= \frac{1}{N} \sum_{n=1}^{N} (\boldsymbol{x}_n - \boldsymbol{\mu}_{ML})(\boldsymbol{x}_n - \boldsymbol{\mu}_{ML})^T \tag{Bishop 1.22}\\
 		&= \begin{pmatrix}
-\frac{1}{1000} \sum_{n=1}^{1000} (\boldsymbol{x}_n - \boldsymbol{\mu}_{ML}(1))(\boldsymbol{x}_n - \boldsymbol{\mu}_{ML}(1))^T & \frac{1}{1000} \sum_{n=1}^{1000} (\boldsymbol{x}_n - \boldsymbol{\mu}_{ML}(1))(\boldsymbol{y}_n - \boldsymbol{\mu}_{ML}(2))^T\\
-\frac{1}{1000} \sum_{n=1}^{1000} (\boldsymbol{y}_n - \boldsymbol{\mu}_{ML}(2))(\boldsymbol{x}_n - \boldsymbol{\mu}_{ML}(1))^T & \frac{1}{1000} \sum_{n=1}^{1000} (\boldsymbol{y}_n - \boldsymbol{\mu}_{ML}(2))(\boldsymbol{y}_n - \boldsymbol{\mu}_{ML}(2))^T
+\frac{1}{1000} \sum_{n=1}^{1000} (\boldsymbol{x}_n - \boldsymbol{\mu}_{(1)ML})(\boldsymbol{x}_n - \boldsymbol{\mu}_{(1)ML})^T & \frac{1}{1000} \sum_{n=1}^{1000} (\boldsymbol{x}_n - \boldsymbol{\mu}_{(1)ML})(\boldsymbol{y}_n - \boldsymbol{\mu}_{(2)ML})^T\\
+\frac{1}{1000} \sum_{n=1}^{1000} (\boldsymbol{y}_n - \boldsymbol{\mu}_{(2)ML})(\boldsymbol{x}_n - \boldsymbol{\mu}_{(1)ML})^T & \frac{1}{1000} \sum_{n=1}^{1000} (\boldsymbol{y}_n - \boldsymbol{\mu}_{(2)ML})(\boldsymbol{y}_n - \boldsymbol{\mu}_{(2)ML})^T
 \end{pmatrix}\\
 		&= \begin{pmatrix}
 1.90513804 & 0.72479489\\
 0.72479489 & 3.81690496
 \end{pmatrix}
 		\end{align}
-		This is calculated using the following code:
-		\begin{verbatim}
-		mu_ml = sum(data)/len(data)
+		This is calculated using the code in Listing 1:
+		\begin{lstlisting}[label={list:first},caption=Python code to calculate $\boldsymbol \mu_{ML}$ and $\boldsymbol \Sigma_{ML}$.]
+mu_ml = sum(data)/len(data)
 
 sse = [0,0]
 for point in data:
         	point = np.matrix(point)
         	sse += (point-mu_ml).T*(point-mu_ml)
 sigma_ml =  sse/len(data)
-    		\end{verbatim}
+    		\end{lstlisting}
     		The differences with the 'true' values are:
     		\begin{align}
     		\boldsymbol \mu_t - \boldsymbol \mu_{ML} &= \begin{pmatrix} 0.28584241 \\ 1.42626702\end{pmatrix} - \begin{pmatrix} 0.25383138\\ 1.38260838 \end{pmatrix} = \begin{pmatrix} 0.03201103\\ 0.04365864 \end{pmatrix}\\
     		\boldsymbol \Sigma_t - \boldsymbol \Sigma_{ML} &= \begin{pmatrix} 2.0 & 0.8\\ 0.8 & 4.0 \end{pmatrix} - \begin{pmatrix} 1.90513804 & 0.72479489\\ 0.72479489 & 3.81690496 \end{pmatrix} = \begin{pmatrix} 0.09486196 & 0.07520511\\ 0.07520511 & 0.18309504 \end{pmatrix}
 		\end{align}
 \end{enumerate}
+		For the unbiased covariance:
+		\begin{equation}
+		\boldsymbol {\tilde \Sigma} = \frac{1}{N-1} \sum_{n=1}^N (\boldsymbol x_n - \boldsymbol \mu_{ML})(\boldsymbol x_n - \boldsymbol \mu_{ML})^T \tag{Bishop 2.125}
+		\end{equation}
+		We added this line of code to the function of Listing 1:
+		\begin{verbatim}
+			sigma_ml_unbiased = sse * (1/(len(data)-1))
+		\end{verbatim}
+		The difference between the unbiased covariance and the 'true' covariance is:
+		\begin{equation} 
+		\boldsymbol \Sigma_t - \boldsymbol{\tilde \Sigma} = \begin{pmatrix} 2.0 & 0.8\\ 0.8 & 4.0 \end{pmatrix} - \begin{pmatrix} 1.90704509 & 0.72552041\\ 0.72552041 & 3.82072569 \end{pmatrix} = \begin{pmatrix} 0.09295491 & 0.07447959\\ 0.07447959 & 0.17927431 \end{pmatrix}
+		\end{equation}
+		The difference is slightly smaller than the difference between $\boldsymbol \Sigma_t$ and $\boldsymbol \Sigma_{ML}$. 
 
 \subsection{Sequential learning algorithms}
 \begin{enumerate}
-	\item
+	\item See Listing 2 for our procedure to process all data points one-by-one to calculate an estimate of $\boldsymbol \mu_{ML}$. \begin{lstlisting}[label={list:first},caption=Python code for function \textit{sequential\_learning\_ml(data)}.]
+def sequential_learning_ml(data):
+    N = 0
+    mu_ml = 0
+    mus = []
+
+    for point in data:
+        N += 1
+        mu_ml = mu_ml + (1/N)*(point-mu_ml)
+        mus.append(mu_ml)
+
+    print "Sequential mu_ml:", mu_ml
+    return mus
+    		\end{lstlisting}
+    		This resulted in:
+    		\begin{equation}
+    		\boldsymbol \mu_{ML} = \begin{pmatrix} 0.25383138 \\ 1.38260838 \end{pmatrix}
+    		\end{equation}
 	\item \begin{equation}p(\boldsymbol{x} | D_{n-1}) = \mathcal{N}(\boldsymbol{x} | \boldsymbol{\mu}, \boldsymbol{\Lambda}^{-1}) \tag{Bishop 2.113}
 		\end{equation}
 where: $\boldsymbol{x} = \boldsymbol{\mu}, \boldsymbol{\mu} = \boldsymbol{\mu}_{(n-1)}, \boldsymbol{\Lambda}^{-1} = \boldsymbol{\Sigma}_{(n-1)}$
@@ -229,17 +259,70 @@ where $\boldsymbol{y} = \boldsymbol{x}_n, \boldsymbol{A} = \boldsymbol{I}, \bold
 			\boldsymbol \Sigma_n &= \boldsymbol S\\
 			\boldsymbol \mu_n &= \boldsymbol \Sigma_n \{ \boldsymbol \Sigma_t^{-1} \boldsymbol x_n + \boldsymbol{\Sigma}_{n-1}^{-1}\}, \boldsymbol \Sigma_n)
 		\end{align}
-	\item
-	\item
+	\item See Listing 3 for our procedure to make a MAP estimation of $\boldsymbol \mu$ by processing the data points one-by-one. \begin{lstlisting}[label={list:first},caption=Python code for function \textit{sequential\_learning\_map(data, mu\_p, sigma\_p, sigma\_t)}.]
+def sequential_learning_map(data, mu_p, sigma_p, sigma_t):
+    sigma = sigma_p
+    mu = mu_p
+    mus = []
+
+    for point in data:
+        point = np.matrix(point).T
+        S =  np.linalg.inv( np.linalg.inv(sigma) + np.linalg.inv(sigma_t))
+        mu = np.dot(S, np.dot( np.linalg.inv(sigma_t), point) + np.dot( np.linalg.inv(sigma),  mu))
+        sigma = S
+        mus.append(np.array(mu))
+
+    print "Sequential mu_map:", mu
+    return mus
+    		\end{lstlisting}
+    		This resulted in:
+    		\begin{equation}
+    		\boldsymbol \mu_{MAP} = \begin{pmatrix} 0.25941079 \\ 1.37796331 \end{pmatrix}
+    		\end{equation}
+	\item See Figure 1.2 for our results: \begin{figure}[h!]
+   			\centering
+   			\includegraphics{mu.png}\vspace{-0.2cm}
+   			\caption{\vspace{-0.2cm} The ML and MAP estimates for $\boldsymbol \mu$ are given, plotted against the amount of data points observed. The 'true' value $\boldsymbol \mu_t$ is also indicated. This is done for both $\boldsymbol \mu_{t1}$ and $\boldsymbol \mu_{t2}$. }
+  		\end{figure}
+  		We observed that the MAP estimate performs better for less data points. This seems logical enough, since the MAP estimate is a regularized version of the ML estimate. When more data points are observed, the difference is almost non-existent.
 \end{enumerate}
 
 \section{The faulty lighthouse}
 \subsection{Constructing the model}
 \begin{enumerate}
 	\item 
+	\item First, using the given $\beta \tan (\theta_k) = x_k - \alpha$, we will calculate the derivation of $\theta$.
+		\begin{align}
+		\beta \tan (\theta_k) &= x_k - \alpha \tag{Assignment eq. 7}\\
+		\tan (\theta_k) &= \frac{x_k - \alpha}{\beta} \\
+		\theta_k &= \tan^{-1} \frac{x_k - \alpha}{\beta} \\
+		\bigg \vert \frac{d\theta}{dx} \bigg \vert &= \frac{1}{1 + (\frac{x_k - \alpha}{\beta})^2} \cdot \bigg \vert \frac{d\frac{x_k - \alpha}{\beta}}{dx} \bigg \vert\\
+		&= \frac{1}{1 + \frac{x_k - \alpha}{\beta}^2} \cdot \frac{\beta}{\beta^2}\\
+		&= \frac{\beta}{\beta^2 + \beta^2(\frac{x_k - \alpha}{\beta})^2}\\
+		&= \frac{\beta}{\beta^2 + \beta^2\frac{(x_k - \alpha)^2}{\beta^2}}\\
+		& = \frac{\beta}{\beta^2 + (x_k - \alpha)^2}
+		\end{align}
+		Since the following equation holds:
+		\begin{equation}
+		p_x(x) = p_{\theta}(\theta_k)\bigg \vert \frac{d\theta}{dx} \bigg \vert \tag{Bishop 1.27}
+		\end{equation}
+		We need to multiply the derivation of $\theta$ with $p(\theta_k | \alpha, \beta)$ (Assignment eq. 6):
+		\begin{align}
+		p(x_k | \alpha, \beta) &= \frac{\beta}{\beta^2 + (x_k - \alpha)^2} \cdot \frac{1}{\pi}\\
+		&= \frac{\beta}{\pi [\beta^2 + (x_k - \alpha)^2]} \tag{Assignment eq. 8}
+		\end{align}
+		We have plotted the distribution for $\beta$ = 1 and for $\alpha$ we chose the value 0.5, as illustrated in Figure 2.1: \begin{figure}[h!]
+   			\centering
+   			\includegraphics{distr.png}\vspace{-0.2cm}
+   			\caption{\vspace{-0.2cm} The probability distribution $p(x_k | \alpha, \beta)$ plotted against $x_k$, with $\alpha = 0.5$ and $\beta = 1$.}
+  		\end{figure}	
 	\item 
-	\item
-	\item
+	\item \begin{figure}[h!]
+   			\centering
+   			\includegraphics{alpharoni.png}\vspace{-0.2cm}
+   			\caption{\vspace{-0.2cm} The probability density $p(\alpha | \mathcal{D}, \beta = 1)$ plotted against $\alpha$.}
+  		\end{figure}
+  		The most likely estimate for $\hat{\alpha}$ = 1.17136. The mean of $\alpha$ = -0.18333. The difference is probably caused by the amount of data points we have, these are very limited. Outliers in the data will have a great effect on the mean.
 \end{enumerate}
 
 \subsection{Generate the lighthouse data}
