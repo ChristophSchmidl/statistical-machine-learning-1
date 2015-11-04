@@ -259,7 +259,8 @@ where $\boldsymbol{y} = \boldsymbol{x}_n, \boldsymbol{A} = \boldsymbol{I}, \bold
 			\boldsymbol \Sigma_n &= \boldsymbol S\\
 			\boldsymbol \mu_n &= \boldsymbol \Sigma_n \{ \boldsymbol \Sigma_t^{-1} \boldsymbol x_n + \boldsymbol{\Sigma}_{n-1}^{-1}\}, \boldsymbol \Sigma_n)
 		\end{align}
-	\item See Listing 3 for our procedure to make a MAP estimation of $\boldsymbol \mu$ by processing the data points one-by-one. \begin{lstlisting}[label={list:first},caption=Python code for function \textit{sequential\_learning\_map(data, mu\_p, sigma\_p, sigma\_t)}.]
+	\item See Listing 3 for our procedure to make a MAP estimation of $\boldsymbol \mu$ by processing the data points one-by-one. \\
+	\begin{lstlisting}[label={list:first},caption=Python code for function \textit{sequential\_learning\_map(data, mu\_p, sigma\_p, sigma\_t)}.]
 def sequential_learning_map(data, mu_p, sigma_p, sigma_t):
     sigma = sigma_p
     mu = mu_p
@@ -287,10 +288,18 @@ def sequential_learning_map(data, mu_p, sigma_p, sigma_t):
   		We observed that the MAP estimate performs better for less data points. This seems logical enough, since the MAP estimate is a regularized version of the ML estimate. When more data points are observed, the difference is almost non-existent.
 \end{enumerate}
 
+\vfill
+
 \section{The faulty lighthouse}
 \subsection{Constructing the model}
 \begin{enumerate}
-	\item 
+	\item A full circle is 360 degrees and correspond to 2$\pi$. Since the light house can only be observed from the coast, which is a straight line, the light can only reach half a circle. This means that we need to see if the distribution for the values $-\frac{1}{2}\pi$ to $\frac{1}{2}\pi$ adds up to one. If it is a reasonable distribution, the following should hold:
+		\begin{align}
+		\int_{-\frac{1}{2}\pi}^{\frac{1}{2}\pi} \frac{1}{\pi} dx &= 1\\
+		&= \frac{x}{\pi} + c \bigg \vert_{-\frac{1}{2}\pi}^{\frac{1}{2}\pi}\\
+		& = \frac{\frac{1}{2}\pi}{\pi} - \frac{-\frac{1}{2}\pi}{\pi} = 1
+		\end{align}
+		We can conclude that since the light of the lighthouse can reach half a circle, $\frac{1}{\pi}$ is a fine distribution (this means a uniform distribution over the possible angles).
 	\item First, using the given $\beta \tan (\theta_k) = x_k - \alpha$, we will calculate the derivation of $\theta$.
 		\begin{align}
 		\beta \tan (\theta_k) &= x_k - \alpha \tag{Assignment eq. 7}\\
@@ -327,7 +336,7 @@ def sequential_learning_map(data, mu_p, sigma_p, sigma_t):
 
 \subsection{Generate the lighthouse data}
 \begin{enumerate}
-	\item
+	\item 
 	\item 
 \end{enumerate}
 
