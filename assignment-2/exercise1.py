@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Guido Zuidhof s4160703
-# Inez Wijnands s4149696
+# Iñez Wijnands s4149696
 # SML ASS 2 exercise1.py
 
 from __future__ import division
@@ -60,11 +60,15 @@ def mu_sigma_maximum_likelihood(data, mu_t, sigma_t):
         sse += (point-mu_ml).T*(point-mu_ml)
 
     sigma_ml =  sse/len(data)
+    sigma_ml_unbiased = sse * (1/(len(data)-1))
 
 
     print "True values:\nmu_t:", mu_t, "\nsigma_t: ", sigma_t, "\n------------"
-    print "Maximum likelihood values:\nmu_ml:", mu_ml, "\nsigma_ml: ", sigma_ml, "\n------------"
+    print "Maximum likelihood values:\nmu_ml:", mu_ml, "\nsigma_ml: ", sigma_ml
+    print "\nsigma_ml_unbiased: ", sigma_ml_unbiased, "\n------------"
+    
     print "Differences:\nmu_t-mu_ml:", mu_t-mu_ml, "\nsigma_t-sigma_ml: ", sigma_t-sigma_ml, "\n------------"
+    print "Sigma unbiased: \nsigma_t-sigma_ml_unbiased: ", sigma_t-sigma_ml_unbiased, "\n------------"
 
     return mu_ml, sigma_ml
 
