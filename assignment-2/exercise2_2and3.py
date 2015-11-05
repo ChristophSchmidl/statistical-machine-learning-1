@@ -11,6 +11,7 @@ from matplotlib import pyplot as plt
 from matplotlib import cm
 
 
+#Generate n datapoints
 def generate_data(a,b,n):
     data = []
     
@@ -50,7 +51,7 @@ def plot_mean_over_time(data):
     
     
 def plot_likelihood(data):
-    a_grid,b_grid = np.meshgrid(np.linspace(-10,10,1000), np.linspace(0,5,1000))
+    a_grid,b_grid = np.meshgrid(np.linspace(-10,10,200), np.linspace(0,5,50))
     
     #Colorbar lower bounds
     vmins = [-20,-30,-40,-240]    
@@ -86,6 +87,7 @@ def log_likelihood(x, data):
     
     
 
+# a = a_true, b = b_true
 def plot_likelihood_function_of_k(data,a,b):
     a_values = []
     b_values = []

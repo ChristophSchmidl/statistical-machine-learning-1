@@ -4,9 +4,7 @@
 # SML ASS 2 exercise1.py
 
 from __future__ import division
-import math
 import numpy as np
-from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import pyplot as plt
 from matplotlib import cm
 from scipy.stats import multivariate_normal
@@ -15,6 +13,7 @@ from scipy.stats import multivariate_normal
 def surf_plot(mu_p, sigma_p):
 
     x,y = np.meshgrid(np.linspace(-0.5,2,300), np.linspace(-0.5,2,300))
+    
     pos = np.empty(x.shape + (2,))
     pos[:, :, 0] = x; pos[:, :, 1] = y
     var = multivariate_normal(mean = np.array(mu_p).flatten(), cov = sigma_p)
@@ -29,12 +28,13 @@ def calculate_prior():
 
     sigma = np.matrix('0.14 -0.3 0.0 0.2; -0.3 1.16 0.2 -0.8; 0.0 0.2 1.0 1.0; 0.2 -0.8 1.0 2.0')
     labda = np.linalg.inv(sigma)
+    
     mu = np.matrix('1; 0; 1; 2')
     sigma_p = np.linalg.inv(labda[0:2,0:2])
     mu_p = mu[0:2] - sigma_p * labda[0:2,2:4] * (np.matrix('0;0') - mu[2:4])
     
     surf_plot(mu_p, sigma_p)
-
+    
     return mu_p, sigma_p
 
 def generate_data(mu_p, sigma_p):
@@ -44,6 +44,8 @@ def generate_data(mu_p, sigma_p):
     sigma_t = np.matrix([[2.0,0.8],[0.8,4.0]])
 
     data = np.random.multivariate_normal(mu_t, sigma_t, 1000)
+    
+    #Save data to ascii text file
     np.savetxt('data.txt',data)
 
     return mu_t, sigma_t
@@ -57,6 +59,9 @@ def mu_sigma_maximum_likelihood(data, mu_t, sigma_t):
     sse = [0,0]
     for point in data:
         point = np.matrix(point)
+        
+        #Our points are not column vectors, that's why the left side
+        #is transposed instead of the right
         sse += (point-mu_ml).T*(point-mu_ml)
 
     sigma_ml =  sse/len(data)
@@ -96,7 +101,9 @@ def sequential_learning_map(data, mu_p, sigma_p, sigma_t):
     mus = []
 
     for point in data:
+        #Our points are not column vectors, now it is.
         point = np.matrix(point).T
+        
         S =  np.linalg.inv( np.linalg.inv(sigma) + np.linalg.inv(sigma_t))
         mu = np.dot(S, np.dot( np.linalg.inv(sigma_t), point) + np.dot( np.linalg.inv(sigma),  mu))
         sigma = S
@@ -107,6 +114,7 @@ def sequential_learning_map(data, mu_p, sigma_p, sigma_t):
     return mus
 
 
+#Plot the various mu's (estimated by ML, MAP and true)
 def plot_mu(mu_t, mu_mls, mu_maps):
     plt.figure(1)
     plt.plot(range(1000),zip(*mu_mls)[0], label="ML for $\mu_{t1}$") 
@@ -123,6 +131,8 @@ if __name__ == "__main__":
     np.random.seed(0)
     mu_p, sigma_p = calculate_prior()
     mu_t, sigma_t = generate_data(mu_p, sigma_p)
+    
+    #Load data from text file
     data = np.loadtxt('data.txt')
     mu_ml, sigma_ml = mu_sigma_maximum_likelihood(data, mu_t, sigma_t)
 
