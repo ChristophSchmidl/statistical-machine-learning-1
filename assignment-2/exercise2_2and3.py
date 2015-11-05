@@ -86,7 +86,6 @@ def log_likelihood(x, data):
     return -log_llh
     
     
-
 # a = a_true, b = b_true
 def plot_likelihood_function_of_k(data,a,b):
     a_values = []
