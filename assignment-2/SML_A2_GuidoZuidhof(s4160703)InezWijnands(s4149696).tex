@@ -7,6 +7,7 @@
 \usepackage{fourier}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{cprotect}
 
 \usepackage{tgtermes}
 
@@ -109,7 +110,7 @@ bindingoffset=0mm, top=20mm,bottom=20mm}
 
 \maketitle
 
-\noindent \textit{The entire code listing is in a separate file. The listings shown here are merely code snippets}.\vspace{-0.5cm}
+\noindent \textit{The entire code listing is included in the zip-file. The listings shown here are merely code snippets}.\vspace{-0.5cm}
 \section{Sequential learning}
 \subsection{Obtaining the prior}
 \begin{enumerate}
@@ -293,13 +294,13 @@ def sequential_learning_map(data, mu_p, sigma_p, sigma_t):
 \section{The faulty lighthouse}
 \subsection{Constructing the model}
 \begin{enumerate}
-	\item A full circle is 360 degrees and correspond to 2$\pi$. Since the light house can only be observed from the coast, which is a straight line, the light can only reach half a circle. This means that we need to see if the distribution for the values $-\frac{1}{2}\pi$ to $\frac{1}{2}\pi$ adds up to one. If it is a reasonable distribution, the following should hold:
+	\item A full circle is 360 degrees and corresponds to 2$\pi$ rad. Since the light house can only be observed from the coast, which is a straight line, the light can only reach half a circle. This means that we need to see if the distribution for the values $-\frac{1}{2}\pi$ rad to $\frac{1}{2}\pi$ rad adds up to one. If it is a reasonable distribution, the following should hold:
 		\begin{align}
 		\int_{-\frac{1}{2}\pi}^{\frac{1}{2}\pi} \frac{1}{\pi} dx &= 1\\
 		&= \frac{x}{\pi} + c \bigg \vert_{-\frac{1}{2}\pi}^{\frac{1}{2}\pi}\\
 		& = \frac{\frac{1}{2}\pi}{\pi} - \frac{-\frac{1}{2}\pi}{\pi} = 1
 		\end{align}
-		We can conclude that since the light of the lighthouse can reach half a circle, $\frac{1}{\pi}$ is a fine distribution (this means a uniform distribution over the possible angles).
+		We can conclude that since the light of the lighthouse can reach half a circle, $\frac{1}{\pi}$ is a fine distribution (as it is a uniform distribution over the possible angles).
 	\item First, using the given $\beta \tan (\theta_k) = x_k - \alpha$, we will calculate the derivation of $\theta$.
 		\begin{align}
 		\beta \tan (\theta_k) &= x_k - \alpha \tag{Assignment eq. 7}\\
@@ -343,7 +344,7 @@ def sequential_learning_map(data, mu_p, sigma_p, sigma_t):
 		\begin{align}
 		\hat \alpha &= \arg \max_\alpha [p(\mathcal{D} | \alpha, \beta)]\\
 		&= \arg \max_\alpha [\prod_{x_k \in \mathcal{D}} p(x_k | \alpha, \beta)]\\
-		&= \arg \max_\alpha [\prod_{x_k \in \mathcal{D}} \frac{\beta}{\pi[\beta^2 + (x_k - \alpha)^2]}]\\
+		&= \arg \max_\alpha [\prod_{x_k \in \mathcal{D}} \frac{\beta}{\pi[\beta^2 + (x_k - \alpha)^2]}]
 		\end{align}
 	\item \begin{figure}[h!]
    			\centering
@@ -355,14 +356,74 @@ def sequential_learning_map(data, mu_p, sigma_p, sigma_t):
 
 \subsection{Generate the lighthouse data}
 \begin{enumerate}
-	\item 
-	\item 
+	\item The code for sampling a position for our light house is listed in Listing 4: \vspace{-0.4cm}
+	\begin{lstlisting}[label={list:first},caption=Python code for function \textit{generate\_random\_position()}.]
+def generate_random_position():
+    a = np.random.uniform(0.00,10.0)
+    b = np.random.uniform(1.0,2.0)
+    return a,b
+    \end{lstlisting}
+    		This resulted in the following coordinates:
+    		\begin{align}
+    		\alpha_t &= 3.74540\\
+    		\beta_t &= 1.95071
+    		\end{align}
+	\item We generate the data set $\mathcal{D}$ with the code from Listing 5: \vspace{-0.4cm} \begin{lstlisting}[label={list:first},caption=Python code for function \textit{generate\_data(a,b,n)}.]
+def generate_data(a,b,n):
+    data = []
+    for _ in xrange(n):
+        angle = np.random.uniform(0.5*-math.pi, 0.5*math.pi)
+        value = b*math.tan(angle)+a
+        data.append(value)
+    
+    return data
+    \end{lstlisting}
+	\item \begin{figure}[h!]
+   			\centering
+   			\includegraphics{meany.png}\vspace{-0.2cm}
+   			\caption{\vspace{-0.2cm} The mean of the data set as a function of the number of data points added. }
+  		\end{figure}
+  		Observing Figure 2.3, we think we need between 75-100 data points to get a reasonable estimate of the mean, but this is with our data. If a dataset contains more outliers, it may take more data points, and if it contains fewer outliers, it may take less points.
 \end{enumerate}
 
 \subsection{Find the lighthouse}
 \begin{enumerate}
-	\item
-	\item 
-	\item 
+	\item See section 2.1.3 for how we obtained the log likelihood function: \begin{equation}
+	\ln(p(\mathcal{D} | \alpha, \beta)) = \bigg \vert \mathcal{D}\bigg \vert \cdot \ln(\frac{\beta}{\pi}) - \sum_{x_k \in \mathcal{D}} \ln([x_k - \alpha)^2 + \beta^2]) \tag{2.18}
+		\end{equation}
+	\item See Figure 2.4 for the plots of the log likelihood calculations with different amounts of data ($k$) used for the calculation. For few data points (smaller $k$), $\beta$ is always around 0. However, the value for $\alpha$ is estimated near the true value already with limited data points. This might be because $\alpha$ and $\beta$ contribute differently to the log likelihood, and thus observations would change the likelihood in a different manner as well.\\
+	We use the log likelihood instead of the likelihood, because the square term in the likelihood function decreases the likelihood very fast. The log likelihood is a regularized version of the likelihood and thus the value would change in a less extreme way, making smaller changes better visible because not all values are scaled to one extreme peak. 
+		\begin{figure}[h!]
+			\centering
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{llhk1.png}
+				\caption{k = 1.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{llhk2.png}
+				\caption{k = 2.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{llhk3.png}
+				\caption{k = 3.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{llhk20.png}
+				\caption{k = 20.}
+			\end{subfigure}
+			\caption{Log likelihood for k.}
+			\label{fig:logllh}
+		\end{figure}
+	\item We used the scipy-equivalent \verb|scipy.optimize.fmin(function,*args)| in Python of the MATLAB-function \verb|fminsearch|). See Figure 2.5 for our results:
+		\begin{figure}[h!]
+   			\centering
+   			\includegraphics{fmin.png}\vspace{-0.2cm}
+   			\cprotect\caption{\vspace{-0.2cm} Minimum $\alpha$ and $\beta$ that are found by using the \verb|fmin| function to minimize the log likelihood function.}
+  		\end{figure}
+  		When we compare the found values for $\alpha$ and $\beta$ with the 'true' values as in section 2.2.1, we get the following differences:
+  		\begin{align}
+  		\alpha_t - \alpha_{fmin} &= 3.74540 - 3.56695 =  0.17845\\
+  		\beta_t - \beta_{fmin} &= 1.95071 - 2.13500 = -0.18429
+  		\end{align}
 \end{enumerate}
 \end{document}
