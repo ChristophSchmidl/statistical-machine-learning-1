@@ -325,7 +325,26 @@ def sequential_learning_map(data, mu_p, sigma_p, sigma_t):
    			\includegraphics{distr.png}\vspace{-0.2cm}
    			\caption{\vspace{-0.2cm} The probability distribution $p(x_k | \alpha, \beta)$ plotted against $x_k$, with $\alpha = 0.5$ and $\beta = 1$.}
   		\end{figure}	
-	\item 
+	\item \begin{align}
+		p(\alpha | \mathcal{D}, \beta) &= p(\mathcal{D} | \alpha, \beta) p(\alpha | \beta)\\
+		p(x_k | \alpha, \beta) &= \frac{\beta}{\pi[\beta^2 + (x_k - \alpha)^2]} \tag{Assignment eq. 8}\\
+		&= \frac{\beta}{\pi} \cdot \frac{1}{\beta^2 + (x_k - \alpha)^2}\\
+		\ln(p(x_k | \alpha, \beta)) &= \ln(\frac{\beta}{\pi} \cdot \frac{1}{\beta^2 + (x_k - \alpha)^2})\\
+		&= \ln\frac{\beta}{\pi} + \ln(\frac{1}{\beta^2 + (x_k - \alpha)^2})\\
+		&= \ln\frac{\beta}{\pi} - \ln[\beta^2 + (x_k - \alpha)^2]\\
+		p(\mathcal{D} | \alpha, \beta) &= \prod_{x_k \in \mathcal{D}} p(x_k | \alpha, \beta)\\
+		\ln(p(\mathcal{D} | \alpha, \beta)) &= \bigg \vert \mathcal{D}\bigg \vert \cdot \ln(\frac{\beta}{\pi}) - \sum_{x_k \in \mathcal{D}} \ln([x_k - \alpha)^2 + \beta^2])
+		\end{align}
+		Since $\bigg \vert \mathcal{D}\bigg \vert \cdot \ln(\frac{\beta}{\pi})$ is a constant, the log of the posterior density can be written like this:
+		\begin{equation}
+		\ln(p(\alpha | \mathcal{D}, \beta)) = \bigg \vert \mathcal{D}\bigg \vert \cdot \ln(\frac{\beta}{\pi}) - \sum_{x_k \in \mathcal{D}} \ln([x_k - \alpha)^2 + \beta^2]) \tag{Assignment eq. 9}
+		\end{equation}
+		Maximizing the posterior density gives the following expression:
+		\begin{align}
+		\hat \alpha &= \arg \max_\alpha [p(\mathcal{D} | \alpha, \beta)]\\
+		&= \arg \max_\alpha [\prod_{x_k \in \mathcal{D}} p(x_k | \alpha, \beta)]\\
+		&= \arg \max_\alpha [\prod_{x_k \in \mathcal{D}} \frac{\beta}{\pi[\beta^2 + (x_k - \alpha)^2]}]\\
+		\end{align}
 	\item \begin{figure}[h!]
    			\centering
    			\includegraphics{alpharoni.png}\vspace{-0.2cm}
