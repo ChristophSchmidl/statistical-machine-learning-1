@@ -194,13 +194,124 @@ bindingoffset=0mm, top=20mm,bottom=20mm}
 \section{Logistic regression}
 \subsection{The IRLS algorithm}
 \begin{enumerate}
-	\item 
-	\item 
-	\item 
+	\item Because our function $f(\boldsymbol{x}_n)$ is one-dimensional, we can take the second derivate of $f(\boldsymbol{x}_n)$ as our Hessian function, and rewrite Eq. 2.1 as Eq. 2.2. 
+		\begin{align}
+		\boldsymbol{x}_{n+1} &= \boldsymbol{x}_n - \boldsymbol{H}^{-1} \nabla f(\boldsymbol{x}_n)\\
+		&= \boldsymbol{x}_n - \frac{\frac{df(\boldsymbol{x}_n)}{dx_n} f(\boldsymbol{x}_n)}{\frac{d^2f(\boldsymbol{x}_n)}{d^2\boldsymbol{x}_n} f(\boldsymbol{x}_n)}\\
+		f(\boldsymbol{x}_n) &= sin(\boldsymbol{x}_n)\\
+		\boldsymbol{x}_{n+1} &= \boldsymbol{x}_n - \frac{cos(\boldsymbol{x}_n)}{-sin(\boldsymbol{x}_n)} = \boldsymbol{x}_n + \frac{cos(\boldsymbol{x}_n)}{sin(\boldsymbol{x}_n)}
+		\end{align}
+		We implemented the Newton-Raphson iterative method in the functions depicted in Listing 1:
+		\begin{lstlisting}[label={list:first},caption=Python code for function \textit{hessian\_sin(x)} and \textit{run\_hessian\_sin(x, n\_iter=5)}.]
+def hessian_sin(x):
+    return x + (np.cos(x)/np.sin(x))
+
+def run_hessian_sin(x, n_iter=5):
+    print "x_0:", x
+    
+    for i in xrange(n_iter):
+        x = hessian_sin(x)
+        print 'x_'+str(i+1)+":",x
+    		\end{lstlisting}
+		For $x_0 = 1$ this resulted in:
+		\begin{align*}
+		x_1&: 1.64209261593\\
+		x_2&: 1.57067527716\\
+		x_3&: 1.5707963268\\
+		x_4&: 1.57079632679\\
+		x_5&: 1.57079632679
+		\end{align*}
+		The algorithm converges to around 1.5708 after 4 iterations.\\
+		For $x_0 = -1$ this resulted in: 
+		\begin{align*}
+		x_1&: -1.64209261593\\
+		x_2&: -1.57067527716\\
+		x_3&: -1.5707963268\\
+		x_4&: -1.57079632679\\
+		x_5&: -1.57079632679
+		\end{align*}
+		This is the same, except the negative value. For $x_0 = 1$, the value is the maximum of $sin(x)$, whereas for $x_0 = -1$, the value is the minimum of $sin(x)$, this is to be expected. Since this method finds the minima and maxima of a function, this is to be expected. 
+	\item See Listing 2 for the code to calculate the IRLS algorithm on the given data. \begin{lstlisting}[label={list:first},caption=Python code for function \textit{sigmoid(x)} and \textit{H(phi, y)} and the $main$.]
+def sigmoid(x):
+    return 1.0/(1.0+np.exp(-x))
+    
+def H(phi, y):
+    R = np.diag(np.ndarray.flatten(y * (1-y)))
+    return np.dot(phi.T,(np.dot(R,phi)))
+
+
+if __name__ == '__main__':
+    phi = np.array([[1,0.3],[1,0.44],[1,0.46],[1,0.6]])
+    t = np.array([[1],[0],[1],[0]])
+    w = np.array([[1],[1]])
+    
+    for i in range(10):
+        y = sigmoid(np.dot(phi,w))
+        h = H(phi, y)
+        
+        w = w - np.dot(np.linalg.inv(h) , (np.dot(phi.T,y-t)))
+        print i+1, w
+    		\end{lstlisting}
+		After 6 iterations our algorithm converges to $\hat{\boldsymbol{w}} = \begin{pmatrix} 9.78228 \\ -21.73839 \end{pmatrix}$, which corresponds to $\hat{\boldsymbol{w}} \approx \begin{pmatrix} 9.8 \\ -21.7 \end{pmatrix}$ as mentioned in the assignment as the optimal solution.\\
+		We will show that this corresponds to a decision boundary of $\phi = 0.45$. Since $p(\mathcal{C}_1 | \boldsymbol{\phi})$ = $p(\mathcal{C}_2 | \boldsymbol{\phi})$ = 0.5 and we can fill in $\hat{\boldsymbol{w}} = \begin{pmatrix} 9.8 \\ -21.7 \end{pmatrix}$, we can solve the following equation to find $\phi$:
+		\begin{align}
+		p(\mathcal{C}_1 | \boldsymbol{\phi}) &= y(\boldsymbol{\phi}) = \sigma(\boldsymbol{w}^T\boldsymbol{\phi})\\
+		0.5 &= \frac{1}{1 + \exp(\boldsymbol{w}^T\boldsymbol{\phi})}\\
+		&= \frac{1}{1 + \exp(\begin{pmatrix} 9.8 & -21.7 \end{pmatrix} \begin{pmatrix} 1 \\ \phi \end{pmatrix})}\\
+		2 &= 1 + \exp(\begin{pmatrix} 9.8 & -21.7 \end{pmatrix} \begin{pmatrix} 1 \\ \phi \end{pmatrix})\\
+		1 &= \exp(\begin{pmatrix} 9.8 & -21.7 \end{pmatrix} \begin{pmatrix} 1 \\ \phi \end{pmatrix})\\
+		0 &= \begin{pmatrix} 9.8 & -21.7 \end{pmatrix} \begin{pmatrix} 1 \\ \phi \end{pmatrix}\\
+		&= 9.8 \cdot 1 -21.7\phi\\
+		21.7\phi &= 9.8\\
+		\phi &= 0.45
+		\end{align} 
 \end{enumerate}
 
 \subsection{Two-class classification using logistic regression}
 \begin{enumerate}
-	\item 
+	\item The data is plotted and colored according to their labels in Figure 2.1. We think logistic regression is suitable for this problem, since there is a clear separation between classes. The data is not linearly separable by their classes, and thus using the standard feature space with a dummy basis function will not work. 
+		\begin{figure}[h!]
+   			\centering
+   			\includegraphics[width=0.85\textwidth]{exercise2plotta.png}\vspace{-0.4cm}
+   			\caption{\vspace{-0.0cm} Two-class data.}
+  		\end{figure}
+	\item In the IRLS algorithm, we modified the initialization of $\boldsymbol{w}$ and $\boldsymbol{\phi}$, and changed the algorithm a bit to be able to handle the new data as input. The resulting class probabilities are all 0.5:
+		\begin{align}
+		p(\mathcal{C}_1 | \boldsymbol{\phi}) &= y(\boldsymbol{\phi}) = \sigma(\boldsymbol{w}^T\boldsymbol{\phi})\\
+		&= \sigma \begin{pmatrix} 0\\0\\0 \end{pmatrix}^T \boldsymbol{\phi}) = \sigma(0) \\
+		&= \frac{1}{1+\exp(0)} = \frac{1}{1+1} = 0.5
+		\end{align}
+	\item See Figure 2.2. The probabilities range from 0.48 to 0.51, and therefore the colors in the plot are scaled to range from the minimum and maximum of the class probabilities, otherwise (ranging from 0 to 1) there is no visible difference in color for the data points. The initial cross entropy error with the initial weights was 693.14718, computed using the function in Listing 3. The cross entropy error only improves very slightly, and is now 692.96936. This is to be expected, since the class probabilities are all around 0.5 and thus the dummy basis function does not help differentiate between classes.
+		\begin{figure}[h!]
+   			\centering
+   			\includegraphics[width=0.85\textwidth]{exercise2plottadummy.png}\vspace{-0.4cm}
+   			\caption{\vspace{-0.0cm} Data colored according to the class probabilities calculated using $\{x_1,x_2\}$ basis function and the dummy basis function.}
+  		\end{figure}
+		 \begin{lstlisting}[label={list:first},caption=Python code for function \textit{cross\_entropy\_error(labels, y)}.]
+def cross_entropy_error(labels,y):
+    E = 0
+    for label,_y in zip(labels,y):
+        E += label * np.log(_y) + (1-label)*np.log(1-_y)
+        
+    return -E
+    		\end{lstlisting}
+	\item We calculated $\phi_1$ and $\phi_2$ using the function shown in Listing 4, called with $\boldsymbol{\mu}_1 = (0,0)$ for $\phi_1$ and $\boldsymbol{\mu}_2 = (1,1)$ for $\phi_2$. The resulting plot of the data in the feature domain is shown in Figure 2.3. With these features, we think logistic regression can be a very good approach to classify the data, since the different classes are fairly linearly distinguishable in this domain.
+		\begin{lstlisting}[label={list:first},caption=Python code for function \textit{gaussian\_bf(x, mu)}.]
+def gaussian_bf(x, mu):
+    sigma = 0.2 * np.identity(2)
+    return multivariate_normal.pdf(x,mu,sigma)
+		\end{lstlisting}
+		\begin{figure}[h!]
+   			\centering
+   			\includegraphics[width=0.85\textwidth]{exercise2curvy.png}\vspace{-0.4cm}
+   			\caption{\vspace{-0.0cm} Data shown in the feature domain.}
+  		\end{figure}
+	\item The cross entropy error improved to 346.50408, it became much smaller than before (692.96936). The error halfed more or less. By mapping the features to a different feature space (by using the two Gaussian basis functions as features) the data became much better linearly separable, although some values near the boundaries still have fairly uncertain probabilities of belonging to either class (see Figure 2.4).
+		\begin{figure}[h!]
+   			\centering
+   			\includegraphics[width=0.85\textwidth]{exercise2galaxy.png}\vspace{-0.4cm}
+   			\caption{\vspace{-0.0cm} Data colored according to the class probabilities calculated using the Gaussian basis functions and the dummy basis function.}
+  		\end{figure}
 \end{enumerate}
+
 \end{document}
