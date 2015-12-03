@@ -6,7 +6,6 @@
 from __future__ import division
 import numpy as np
 from matplotlib import pyplot as plt
-from matplotlib import cm
 
 from numpy.random import multivariate_normal
 
@@ -21,11 +20,8 @@ def m(x, w=[-0.0445,-0.2021]):
 def s2(x, S_N_inverse):
     return 1/10 + np.dot( phi(x).T, np.dot(np.linalg.inv(S_N_inverse),phi(x)))
 
-
-
-
 if __name__ == '__main__':
-    np.random.seed(7)
+    np.random.seed(7) #For pretty pink lines
     m_N = np.array((-0.0445, -0.2021))    
     S_N_inverse = np.array(((22,10),(10,7.2)))
     

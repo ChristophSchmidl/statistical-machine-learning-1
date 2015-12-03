@@ -18,6 +18,7 @@ def run_hessian_sin(x, n_iter=5):
         x = hessian_sin(x)
         print 'x_'+str(i+1)+":",x
     
+#Hessian
 def H(phi, y):
     R = np.diag(np.ndarray.flatten(y * (1-y)))
     return np.dot(phi.T,(np.dot(R,phi)))
