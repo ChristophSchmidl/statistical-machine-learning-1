@@ -19,7 +19,7 @@ def H(phi, y):
 def scatter_plotta(x,y,colors,xlabel='$X[:,0]$',ylabel='$X[:,1]$'):
     cmap = plt.cm.get_cmap('spring')    
     
-    z = plt.scatter(x,y, c=colors, cmap=cmap, alpha=0.7, s=12, edgecolors='none')
+    z = plt.scatter(x,y, c=colors, cmap=cmap, alpha=1, s=12, edgecolors='none')
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.colorbar(z)
