@@ -113,6 +113,32 @@ bindingoffset=0mm, top=20mm,bottom=20mm}
 \noindent \textit{The entire code listing is included in the zip-file. The listings shown here are merely code snippets}.\vspace{-0.5cm}
 \section{Neural networks}
 \begin{enumerate}
+	\item Since all the weights have the same update function, if all the weights are $0$,  after the updates they will still remain the same as the other weights. This way you don't break the symmetry when backpropagating.
+	\item First, we take the weighted sum of the input $x$:
+		\begin{align*}
+		a_j &= \sum_i w_{ji}x_i + b_3^{(1)} x_0\\
+		a_1 &= w_{11} \cdot x_1 + b_{31} \cdot x_0 = 0.5 + 1 = 1.5\\
+		a_2 &= w_{21} \cdot x_1 + b_{32} \cdot x_0 = 0.05 + 0 = 0.05 \\
+		a_3 &= w_{31} \cdot x_1 + b_{33} \cdot x_0 = -0.5 + 1 = 0.5
+		\end{align*}
+		\noindent Where the input $x_i$ given in the assignment $\in \{x_1,t_1\} = \{0.5, 0.25\}$, and $w_{ji}$ is also given $\in w^{(1)} = [1,0.1,-1]$.\\
+		Now we calculate the activation $z_j$ of unit $j$:
+		\begin{align*}
+		z_j &= h(a_j) = \tanh(a_j) = \frac{e^{a_j} - e^{-a_j}}{e^{a_j} + e^{-a_j}}\\
+		z_1 &= \tanh(1.5) = 0.90515\\
+		z_2 &= \tanh(0.05) = 0.04996\\
+		z_3 &= \tanh(0.5) = 0.46212
+		\end{align*}
+		Then, we calculate the output using the linear activation function given in the assignment:
+		\begin{align*}
+		y &= \sum_j w_j^{(2)}z_j + b_1^{(2)}\\
+		&= w_1^{(2)}z_1 + w_2^{(2)}z_2 + w_3^{(2)}z_3 + b_1^{(2)}\\
+		&= -1 \cdot 0.90515 + 0.1 \cdot 0.04996 + -1 \cdot 0.46212 + 2\\
+		&= -0.90515 + 0.004996 - 0.46212 + 2 \\
+		&= 0.63773
+		\end{align*}
+		Second, we backpropagate the error $\delta = (y - t)$ 
+	\item 
 	\item 
 \end{enumerate}
 
