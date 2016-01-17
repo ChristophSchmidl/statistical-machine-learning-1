@@ -42,7 +42,7 @@ def plot_standard_gaussian():
     x2_space = np.linspace(-2,2,40)
     
 
-    plot_gaussian(ex1_gaussian, x1_space, x2_space, "Standard isotropic gaussian")
+    plot_gaussian(ex1_gaussian, x1_space, x2_space, "std_iso_gaussian")
 
 if __name__ == "__main__":
     plot_standard_gaussian()
