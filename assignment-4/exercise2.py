@@ -32,7 +32,7 @@ def plot_gaussian(data_function, a_space, b_space, name):
     surf = ax.plot_surface(X,Y, Z, cmap=cm.winter, linewidth=0.05,rstride=2, cstride=2)
     #plt.colorbar(surf, shrink=1,aspect=30)
     
-    fig.set_size_inches(16,16)
+    fig.set_size_inches(10,7)
     fig.savefig(name, dpi=100)
 
 
