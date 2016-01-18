@@ -8,7 +8,8 @@ from matplotlib import pyplot as plt
 from matplotlib import cm
 from scipy.stats import multivariate_normal
 from mpl_toolkits.mplot3d import Axes3D
-
+import operator
+import random
 
 
 #Gaussian
@@ -29,7 +30,9 @@ def plot_gaussian(data_function, a_space, b_space, name):
     #plt.title("Isotropic 2D Gaussian")
     plt.xlabel(r'$x_1$')
     plt.ylabel(r'$x_2$')
+    
     surf = ax.plot_surface(X,Y, Z, cmap=cm.winter, linewidth=0.05,rstride=2, cstride=2)
+    
     #plt.colorbar(surf, shrink=1,aspect=30)
     
     fig.set_size_inches(10,7)
@@ -47,6 +50,7 @@ def plot_gaussian_given(X, Y, Z, name):
     plt.xlabel(r'$x_1$')
     plt.ylabel(r'$x_2$')
     surf = ax.plot_surface(X,Y, Z, cmap=cm.winter, linewidth=0.05,rstride=2, cstride=2)
+    ax.view_init(elev=45, azim=0)
     #plt.colorbar(surf, shrink=1,aspect=30)
     
     fig.set_size_inches(10,7)
@@ -60,52 +64,65 @@ def plot_standard_gaussian():
     
     plot_gaussian(ex1_gaussian, x1_space, x2_space, "std_iso_gaussian")
 
-def activation_tanh(X):
-    return np.tanh(np.sum(X))
-    
-def activation_output(X):
-    return np.sum(X)
 
 
-
-def forward_pass(layers, X):
+def forward_pass(w1, w2, X):
     
     X = np.copy(X)
     
-    for i, layer in enumerate(layers):
-        
-        next_x = []
-        for node in layer:
-            W = node #Weights
-            if i == len(layers)-1:
-                next_x.append(activation_output(np.dot(X,W)))
-            else:
-                next_x.append(activation_tanh(np.dot(X,W)))
-        X = next_x
+    activations_hidden = []#np.zeros((len(w1),))
     
-    return X
+    for W in w1:
+        weighted_sum = np.sum(np.dot(X,W))
+        activations_hidden.append(np.tanh(weighted_sum))
+        
+    output = np.sum( np.dot(activations_hidden, w2))
+    return output, activations_hidden 
+    
+    
+def backpropagation(w1, w2, activations, output, target, x, eta=0.1):
+    d_k = output - target
+    d_js = []
+    
+    delta_weights = []
+    #Update hidden->output weights
+    for activation, weight in zip(activations, w2):
+        d_j = (1-activation**2) * weight * d_k
+        
+        delta_weight = d_k * activation
+
+        
+        delta_weights.append(delta_weight)
+        d_js.append(d_j)
+    
+    w2 = w2 - eta * np.array(delta_weights)
+    
+    
+    delta_weights = []
+    #Update input->hidden weights
+    for d_j in d_js:
+        delta_weight = d_j * np.array(x)
+        delta_weights.append(delta_weight)
+    
+    w1 = w1 - eta * np.array(delta_weights)
+        
+    return w1, w2
+    
     
 
-def create_layer(n_nodes):
-    return np.random.rand(n_nodes)-0.5
+def create_weights(n_nodes):
+    return np.random.rand(*n_nodes)-0.5
     
     
-def create_layers(n_layers=2, n_input_nodes=2, n_hidden_nodes=8, n_output_nodes=1):
-    n_hidden_layers = n_layers - 1
+def create_nn(n_input_nodes=2, n_hidden_nodes=8, n_output_nodes=1):
     
-    layers = []
-    input_layer = create_layer(n_input_nodes)
-    layers.append(input_layer)
+    weights_1 = np.random.rand(n_hidden_nodes,n_input_nodes)-0.5
+    #print weights_1, len(weights_1)
     
-    for n in xrange(n_hidden_layers):
-        layer = create_layer(n_hidden_nodes)
-        layers.append(layer)
-        
-    output_layer = create_layer(n_output_nodes)
-    layers.append(output_layer)
+    weights_2 = np.random.rand(n_hidden_nodes)-0.5
     
-    return layers
     
+    return weights_1, weights_2#, activations_hidden, activations_output
     
 
 def run_nn():
@@ -116,25 +133,39 @@ def run_nn():
     
     X = zip(np.ravel(x_grid),np.ravel(y_grid))
     
-    #Y = np.array( [ex1_gaussian([x1,x2]) for x1,x2 in x])
-    #y = Y.reshape(x_grid.shape)
+    y = np.array( [ex1_gaussian([x1,x2]) for x1,x2 in X])
+    Y = y
         
-    layers = create_layers()
+    weights_1, weights_2 = create_nn()
     
-    outputs = []
-    for x in X:
-        outputs.append(forward_pass(layers, x))
+    
+    for i in range(500):
+        outputs = np.zeros(Y.shape)
         
-    output = outputs
-    
-  
-    plot_gaussian_given(x_grid, y_grid, output, "ex2_2")
-    
+        
+        indices = range(len(X))
 
+        for index in indices:
+            x = X[index]
+            y = Y[index]     
+            
+            out, activation = forward_pass(weights_1, weights_2, x)
+            outputs[index] = out
+            weights_1, weights_2 = backpropagation(weights_1, weights_2, activation, out, target=y, x=x)
+      
+      
+        if (i+1)%50 == 0:            
+            O = outputs.reshape(x_grid.shape)
+            plot_gaussian_given(x_grid, y_grid, O, "ex2_3_"+str(i+1))
+        if (i+1)%10 == 0:
+            print i
+    
 
 
 if __name__ == "__main__":
-    np.random.seed(42)
+    np.random.seed(1)
     #plot_standard_gaussian()
+    
+    create_nn()
     run_nn()
     print "yes yes yes girl"
