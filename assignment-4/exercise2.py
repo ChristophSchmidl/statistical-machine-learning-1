@@ -114,7 +114,6 @@ def create_weights(n_nodes):
     
     
 def create_nn(n_input_nodes=2, n_hidden_nodes=8, n_output_nodes=1):
-    
     weights_1 = np.random.rand(n_hidden_nodes,n_input_nodes)-0.5
     weights_2 = np.random.rand(n_hidden_nodes)-0.5
     
@@ -134,14 +133,10 @@ def run_nn():
     
     indices = range(len(X))
     random.shuffle(indices)
-        
+    outputs = np.zeros(Y.shape)
+    
     for i in range(500):
         
-        outputs = np.zeros(Y.shape)
-        
-        
-        
-
         for n, index in enumerate(indices):
             
             x = X[index]
@@ -151,7 +146,6 @@ def run_nn():
             outputs[index] = out
             weights_1, weights_2 = backpropagation(weights_1, weights_2, activation, out, target=y, x=x)
       
-        #print outputs
       
         if (i+1)%50 == 0:            
            # print Y.shape, outputs.shape, '---'
