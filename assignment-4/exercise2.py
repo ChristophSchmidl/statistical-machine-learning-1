@@ -49,7 +49,7 @@ def plot_gaussian_given(X, Y, Z, name):
     plt.xlabel(r'$x_1$')
     plt.ylabel(r'$x_2$')
     surf = ax.plot_surface(X,Y, Z, cmap=cm.winter, linewidth=0.05,rstride=2, cstride=2)
-    ax.view_init(elev=45, azim=0)
+    #ax.view_init(elev=45, azim=0)
     #plt.colorbar(surf, shrink=1,aspect=30)
     
     fig.set_size_inches(10,7)
@@ -67,12 +67,19 @@ def plot_standard_gaussian():
 
 def forward_pass(w1, w2, X):
     
+    X_with_bias = list(X) + [1]
+    
+    
     activations_hidden = []#np.zeros((len(w1),))
     
     for W in w1:
-        weighted_sum = np.sum(np.dot(X,W))
+        weighted_sum = np.sum(np.dot(X_with_bias,W))
         activations_hidden.append(np.tanh(weighted_sum))
         
+    #BIAS!
+    activations_hidden += [1]
+    #print activations_hidden, w2
+   # np.dot(activations_hidden, w2)
     output = np.sum( np.dot(activations_hidden, w2))
     return output, activations_hidden 
     
@@ -83,6 +90,8 @@ def backpropagation(w1, w2, activations, output, target, x, eta=0.5):
     
     delta_weights = []
     
+    #BIAS!
+    x = list(x) + [1]
     
     #Update hidden->output weights
     for activation, weight in zip(activations, w2):
@@ -93,8 +102,12 @@ def backpropagation(w1, w2, activations, output, target, x, eta=0.5):
         delta_weights.append(delta_weight)
         
     
+    
     w2 = w2 - eta * np.array(delta_weights)
     
+    
+    #Remove final element, BIAS
+    d_js = d_js[:-1] 
     
     delta_weights = []
     
@@ -114,8 +127,8 @@ def create_weights(n_nodes):
     
     
 def create_nn(n_input_nodes=2, n_hidden_nodes=8, n_output_nodes=1):
-    weights_1 = np.random.rand(n_hidden_nodes,n_input_nodes)-0.5
-    weights_2 = np.random.rand(n_hidden_nodes)-0.5
+    weights_1 = np.random.rand(n_hidden_nodes,n_input_nodes+1)-0.5
+    weights_2 = np.random.rand(n_hidden_nodes+1)-0.5
     
     return weights_1, weights_2
     
@@ -131,11 +144,14 @@ def run_nn():
         
     weights_1, weights_2 = create_nn()
     
-    indices = range(len(X))
-    random.shuffle(indices)
+    
+    
     outputs = np.zeros(Y.shape)
     
     for i in range(500):
+        outputs = np.zeros(Y.shape)
+        indices = range(len(X))
+        #random.shuffle(indices)
         
         for n, index in enumerate(indices):
             
