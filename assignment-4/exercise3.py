@@ -33,14 +33,28 @@ def plot_hist(X):
         plt.ylabel(r'$frequency$')
         #plt.colorbar(surf, shrink=1,aspect=30)
         plt.legend(loc='upper right')
-        fig.set_size_inches(10,7)
+        #fig.set_size_inches(8,5)
         fig.savefig("hist_x", dpi=100)    
 
 
-
-
+def scatter_plotta(x,y,colors,xlabel='$x$',ylabel='$Xy$',name=""):
+    #cmap = plt.cm.get_cmap('spring')    
+    cmap = plt.cm.get_cmap('jet')   
+    
+    fig = plt.figure(name)
+    z = plt.scatter(x,y, c=colors, cmap=cmap, alpha=1, s=12, edgecolors='none')
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.colorbar(z)
+    
+    fig.set_size_inches(10,7)
+    fig.savefig("scatter_"+name, dpi=100)    
 
 if __name__ == "__main__":
     X = np.loadtxt('a011_mixdata.txt')
-    print X
-    plot_hist(X)
+    x1, x2, x3, x4 = zip(*X)
+    #print X
+    #plot_hist(X)
+    scatter_plotta(x1,x2,x3,"$x_1$","$x_2$","x3")
+    scatter_plotta(x1,x2,x4,"$x_1$","$x_2$","x4")
+    scatter_plotta(x1,x2,np.array(x3)+np.array(x4),"$x_1$","$x_2$","x3plusx4")
