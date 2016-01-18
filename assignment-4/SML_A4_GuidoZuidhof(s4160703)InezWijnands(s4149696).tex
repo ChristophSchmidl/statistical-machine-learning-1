@@ -213,18 +213,179 @@ The weights of either approach do not have to end up with the same final weight 
    			\includegraphics[width=0.88\textwidth]{std_iso_gaussian.png}\vspace{-1cm}
    			\caption{\vspace{-0.1cm} Isotropic 2D Gaussian $y = 3 \cdot \mathcal{N}(\boldsymbol{x} \big\vert \boldsymbol{0}, \frac{2}{5} \boldsymbol{I}_2)$.}\vspace{-0.2cm}
   		\end{figure}
-	\item \begin{figure}[h]
-   			\centering
-   			\includegraphics[width=0.88\textwidth]{ex2_2.png}\vspace{-1cm}
-   			\caption{\vspace{-0.1cm} 2D graph of initial output of network.}\vspace{-0.2cm}
+	\item We have used the activation functions of the previous exercise. We also introduced a bias node in the input layer and in the hidden layer, similar to the previous exercise. The weights for these biases are initialized randomly, the same as the other weights in our network. 
+		\begin{figure}[h!]
+			\centering
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{ex2_2.png}\vspace{-0.5cm}
+				\caption{Initial output.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{ex2_2_1.png}\vspace{-0.5cm}
+				\caption{Output of the second cycle.}
+			\end{subfigure}
+   			\caption{\vspace{-0.1cm} 2D graphs of initial output of network.}\vspace{-0.2cm}
   		\end{figure}
-	\item 
+	\item \begin{figure}[h!]
+			\centering
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{ex2_3_50.png}\vspace{-0.5cm}
+				\caption{Output after 50 cycles.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{ex2_3_100.png}\vspace{-0.5cm}
+				\caption{Output after 100 cycles.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{ex2_3_200.png}\vspace{-0.5cm}
+				\caption{Output after 200 cycles.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{ex2_3_500.png}\vspace{-0.5cm}
+				\caption{Output after 500 cycles.}
+			\end{subfigure}
+   			\caption{\vspace{-0.1cm} 2D graphs of the output of network.}\vspace{-0.2cm}
+  		\end{figure}
+		In Figure 2.2 and Figure 2.3 is shown that the initial outputs still contain multiple peaks. After 100 cycles the output is nearly converged, only really small changes are visible. The plot already resembles the Gaussian density shown in Figure 2.1. Although the expected wobbles are not present.
+	\item \begin{figure}[h!]
+			\centering
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{ex2_4_10.png}\vspace{-0.5cm}
+				\caption{Output after 10 cycles.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{ex2_4_30.png}\vspace{-0.5cm}
+				\caption{Output after 30 cycles.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{ex2_4_50.png}\vspace{-0.5cm}
+				\caption{Output after 50 cycles.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{ex2_4_80.png}\vspace{-0.5cm}
+				\caption{Output after 80 cycles.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{ex2_4_100.png}\vspace{-0.5cm}
+				\caption{Output after 100 cycles.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{ex2_4_500.png}\vspace{-0.5cm}
+				\caption{Output after 500 cycles.}
+			\end{subfigure}
+   			\caption{\vspace{-0.1cm} 2D graphs of the output of network where the data set is in a randomized order}\vspace{-0.2cm}
+  		\end{figure}
+		\noindent In Figure 2.4 is shown what the output looks like when the dataset is permuted in a random order. Convergence is established after around 50-80 cycles, so a bit faster than in 2.3. However, we do see the wobbles in these plots, while we expected to see them as well in 2.3.\\\\
+		Second, we trained the network using 16 hidden nodes instead of 8, but we did not see much difference. However,  the network takes more time to train. When we tried 4 hidden nodes, the network performed quite badly, as can be seen in Figure 2.5. The ouput does not change after more cycles, thus convergence is fast.
+		\begin{figure}[h!]
+   			\centering
+   			\includegraphics[width=0.44\textwidth]{ex2_4lh_500.png}\vspace{-0.6cm}
+   			\caption{\vspace{-0.1cm} 2D graphs of the output of network after 500 cycles with a randomized data order, 4 hidden nodes}\vspace{-0.2cm}
+  		\end{figure}
+		
+		When we change the learning rate to 0.01 instead of 0.1, we get a smoother plot. Convergence is slower, around 250 cycles, as is shown in Figure 2.6.\\
+		\begin{figure}[h!]
+			\centering
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{ex2_4llr_10.png}\vspace{-0.5cm}
+				\caption{Output after 10 cycles.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{ex2_4llr_50.png}\vspace{-0.5cm}
+				\caption{Output after 50 cycles.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{ex2_4llr_100.png}\vspace{-0.5cm}
+				\caption{Output after 100 cycles.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{ex2_4llr_200.png}\vspace{-0.5cm}
+				\caption{Output after 200 cycles.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{ex2_4llr_300.png}\vspace{-0.5cm}
+				\caption{Output after 300 cycles.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{ex2_4llr_500.png}\vspace{-0.5cm}
+				\caption{Output after 500 cycles.}
+			\end{subfigure}
+   			\caption{\vspace{-0.1cm} 2D graphs of the output of network where the data set is in a randomized order, with $\eta = 0.01$}\vspace{-0.2cm}
+  		\end{figure}
+		
+	\item \begin{figure}[h!]
+   			\centering
+   			\includegraphics[width=0.44\textwidth]{ex2_5.png}\vspace{-0.6cm}
+   			\caption{\vspace{-0.1cm} 2D graph of the target probability density function of the real data}\vspace{-0.2cm}
+  		\end{figure}
+	\item We used 60 hidden nodes, and a learning rate of 0.001, for 2000 cycles. The output is almost converged after around 200-300 cycles, only changing a bit towards 2000 cycles.
+		\begin{figure}[h!]
+			\centering
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{plot/ex2_6_50.png}\vspace{-0.5cm}
+				\caption{Output after 50 cycles.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{plot/ex2_6_200.png}\vspace{-0.5cm}
+				\caption{Output after 200 cycles.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{plot/ex2_6_300.png}\vspace{-0.5cm}
+				\caption{Output after 300 cycles.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{plot/ex2_6_2000.png}\vspace{-0.5cm}
+				\caption{Output after 2000 cycles.}
+			\end{subfigure}
+   			\caption{\vspace{-0.1cm} 2D graphs of the output of network where the data set is in a randomized order, with $\eta = 0.001$ and 60 hidden nodes.}\vspace{-0.2cm}
+  		\end{figure}
+		We also tried a learning rate of 0.0001, to see what happens. This does not converge within 2000 cycles, it is too slow. 
+		\begin{figure}[h!]
+			\centering
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{plot/ex2_6_alt50.png}\vspace{-0.5cm}
+				\caption{Output after 50 cycles.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{plot/ex2_6_alt2000.png}\vspace{-0.5cm}
+				\caption{Output after 2000 cycles.}
+			\end{subfigure}
+   			\caption{\vspace{-0.1cm} 2D graphs of the output of network where the data set is in a randomized order, with $\eta = 0.0001$ and 80 hidden nodes}\vspace{-0.2cm}
+  		\end{figure}
+		
 \end{enumerate}
 
 %\vfill
 
 \section{EM and doping}
 \begin{enumerate}
+	\item \begin{figure}[h!]
+   			\centering
+   			\includegraphics[width=0.46\textwidth]{hist_x.png}\vspace{-0.6cm}
+   			\caption{\vspace{-0.1cm} Histogram of the data, different colorings for different $x_i$}\vspace{-0.2cm}
+  		\end{figure}
+		\begin{figure}[h!]
+			\centering
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{scatter_x3.png}\vspace{-0.5cm}
+				\caption{Colored based on $x_3$.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{scatter_x4.png}\vspace{-0.5cm}
+				\caption{Colored based on $x_4$.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.45\textwidth}
+				\includegraphics[width=\textwidth]{scatter_x3plusx4.png}\vspace{-0.5cm}
+				\caption{Colored based on $x_3 + x_4$.}
+			\end{subfigure}
+   			\caption{\vspace{-0.1cm} Scatter plot of data points on axes $x_1$ and $x_2$.}\vspace{-0.2cm}
+  		\end{figure}
+		We think there are 3-4 classes, as far as we can tell from the scatter plots in Figure 3.2. The histograms in Figure 3.1 also show that the data can be devided into 4 clusters that resemble a Gaussian distribution. In Figure 3.3 our estimation of the clusters is shown. We chose these clusters because these are groups of similar sample size, with different densities but the same distance between data points within each group. In the smallest group, the most dense, there is a strong positive correlation between $x_1$ and $x_2$, and we believe this is the group of athletes that have substance 'X' in their blood.
+		\begin{figure}[h!]
+   			\centering
+   			\includegraphics[width=0.44\textwidth]{scatter_x3plusx4_clusters.png}\vspace{-0.6cm}
+   			\caption{\vspace{-0.1cm} Figure 3.2(c) with our estimation of the class distributions drawn over it.}\vspace{-0.2cm}
+  		\end{figure}
 	\item 
 \end{enumerate}
 
