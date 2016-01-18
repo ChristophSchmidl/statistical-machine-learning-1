@@ -37,8 +37,7 @@ def plot_gaussian(data_function, a_space, b_space, name):
     fig.set_size_inches(10,7)
     fig.savefig(name, dpi=100)
     
-def plot_gaussian_given(X, Y, Z, name):
-        
+def plot_gaussian_given(X, Y, Z, name, elev=45, azim=0):
         
     Z = np.array(Z).reshape(X.shape)
     
@@ -49,7 +48,7 @@ def plot_gaussian_given(X, Y, Z, name):
     plt.xlabel(r'$x_1$')
     plt.ylabel(r'$x_2$')
     surf = ax.plot_surface(X,Y, Z, cmap=cm.winter, linewidth=0.05,rstride=2, cstride=2)
-    #ax.view_init(elev=45, azim=0)
+    ax.view_init(elev=elev, azim=azim)
     #plt.colorbar(surf, shrink=1,aspect=30)
     
     fig.set_size_inches(10,7)
@@ -84,7 +83,7 @@ def forward_pass(w1, w2, X):
     return output, activations_hidden 
     
     
-def backpropagation(w1, w2, activations, output, target, x, eta=0.5):
+def backpropagation(w1, w2, activations, output, target, x, eta=0.1):
     d_k = output - target
     d_js = []
     
@@ -134,8 +133,8 @@ def create_nn(n_input_nodes=2, n_hidden_nodes=8, n_output_nodes=1):
     
 
 def run_nn():
-    x1_space = np.linspace(-2,2,20)
-    x2_space = np.linspace(-2,2,20)
+    x1_space = np.linspace(-2,2,40)
+    x2_space = np.linspace(-2,2,40)
     
     x_grid, y_grid = np.meshgrid(x1_space, x2_space)
     
@@ -144,37 +143,80 @@ def run_nn():
         
     weights_1, weights_2 = create_nn()
     
-    
-    
     outputs = np.zeros(Y.shape)
     
     for i in range(500):
         outputs = np.zeros(Y.shape)
         indices = range(len(X))
-        #random.shuffle(indices)
+        random.shuffle(indices)
         
         for n, index in enumerate(indices):
-            
             x = X[index]
             y = Y[index]    
             
             out, activation = forward_pass(weights_1, weights_2, x)
             outputs[index] = out
-            weights_1, weights_2 = backpropagation(weights_1, weights_2, activation, out, target=y, x=x)
+            weights_1, weights_2 = backpropagation(weights_1, weights_2, activation, out, target=y, x=x, eta=0.01)
       
       
         if (i+1)%50 == 0:            
-           # print Y.shape, outputs.shape, '---'
-           # print np.linalg.norm(Y - outputs)
             plot_gaussian_given(x_grid, y_grid, outputs, "ex2_3_"+str(i+1))
+            
         if (i+1)%10 == 0:
+            #print np.linalg.norm(Y - outputs)
             print i
     
 
+def run_nn_6():
+    data = np.loadtxt('a017_NNpdfGaussMix.txt')
+    _x1, _x2, y = zip(*data)
+    #x1 = np.array(x1)
+    #x2 = np.array(x2)
+    Y = np.array(y)
+    
+    x1_space = np.linspace(-2,2,41)
+    x2_space = np.linspace(-2,2,41)
+    
+    x_grid, y_grid = np.meshgrid(x1_space, x2_space)
+    
+    #print len(y), len(x1), len(X), len(Y)
+    #plot_gaussian_given(X, Y, y, "ex2_5")
+    plot_gaussian_given(x_grid, y_grid, y, "ex2_5", elev=75, azim=45)
+    
+    X = zip(np.ravel(x_grid),np.ravel(y_grid))
+    
+    weights_1, weights_2 = create_nn(n_hidden_nodes=60, )
+    
+    outputs = np.zeros(Y.shape)
+    
+    for i in range(2000):
+        outputs = np.zeros(Y.shape)
+        indices = range(len(X))
+        random.shuffle(indices)
+        
+        for n, index in enumerate(indices):
+            x = X[index]
+            y = Y[index]    
+            
+            out, activation = forward_pass(weights_1, weights_2, x)
+            outputs[index] = out
+            weights_1, weights_2 = backpropagation(weights_1, weights_2, activation, out, target=y, x=x, eta=0.001)
+      
+      
+        if (i+1)%50 == 0:            
+            plot_gaussian_given(x_grid, y_grid, outputs, "plot/ex2_6_"+str(i+1), elev=65, azim=45)
+            
+        if (i+1)%10 == 0:
+            #print np.linalg.norm(Y - outputs)
+            print i
 
 if __name__ == "__main__":
     np.random.seed(1)
     #plot_standard_gaussian()
 
-    run_nn()
+    #run_nn()
+    
+    run_nn_6()
+    
+    
     print "yes yes yes girl"
