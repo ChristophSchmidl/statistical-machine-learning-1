@@ -149,7 +149,7 @@ def run_nn():
     for i in tqdm(range(500)):
         outputs = np.zeros(Y.shape)
         indices = range(len(X))
-        #random.shuffle(indices)
+        random.shuffle(indices)
         
         for n, index in enumerate(indices):
             x = X[index]
@@ -159,12 +159,15 @@ def run_nn():
             outputs[index] = out
             weights_1, weights_2 = backpropagation(weights_1, weights_2, activation, out, target=y, x=x, eta=0.1)
       
-        if i == 0:
-            plot_gaussian_given(x_grid, y_grid, outputs, "ex2_2", elev=45, azim=45)
-        if i == 1:
-            plot_gaussian_given(x_grid, y_grid, outputs, "ex2_2_1", elev=45, azim=45)
+        #if i == 0:
+        #    plot_gaussian_given(x_grid, y_grid, outputs, "ex2_2", elev=45, azim=45)
+        #if i == 1:
+        #    plot_gaussian_given(x_grid, y_grid, outputs, "ex2_2_1", elev=45, azim=45)
         if (i+1)%50 == 0:            
-            plot_gaussian_given(x_grid, y_grid, outputs, "ex2_3_"+str(i+1), elev=45, azim=45)
+            plot_gaussian_given(x_grid, y_grid, outputs, "ex2_4_"+str(i+1), elev=45, azim=45)
+            
+        if (i+1)%10 == 0 and i < 101:
+            plot_gaussian_given(x_grid, y_grid, outputs, "ex2_4_"+str(i+1), elev=45, azim=45)
 
 def run_nn_6():
     data = np.loadtxt('a017_NNpdfGaussMix.txt')
