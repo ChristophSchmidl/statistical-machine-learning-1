@@ -8,7 +8,6 @@ from matplotlib import pyplot as plt
 from matplotlib import cm
 from scipy.stats import multivariate_normal
 from mpl_toolkits.mplot3d import Axes3D
-import operator
 import random
 
 
@@ -68,8 +67,6 @@ def plot_standard_gaussian():
 
 def forward_pass(w1, w2, X):
     
-    X = np.copy(X)
-    
     activations_hidden = []#np.zeros((len(w1),))
     
     for W in w1:
@@ -80,25 +77,27 @@ def forward_pass(w1, w2, X):
     return output, activations_hidden 
     
     
-def backpropagation(w1, w2, activations, output, target, x, eta=0.1):
+def backpropagation(w1, w2, activations, output, target, x, eta=0.5):
     d_k = output - target
     d_js = []
     
     delta_weights = []
+    
+    
     #Update hidden->output weights
     for activation, weight in zip(activations, w2):
         d_j = (1-activation**2) * weight * d_k
+        d_js.append(d_j)
         
         delta_weight = d_k * activation
-
-        
         delta_weights.append(delta_weight)
-        d_js.append(d_j)
+        
     
     w2 = w2 - eta * np.array(delta_weights)
     
     
     delta_weights = []
+    
     #Update input->hidden weights
     for d_j in d_js:
         delta_weight = d_j * np.array(x)
@@ -117,46 +116,47 @@ def create_weights(n_nodes):
 def create_nn(n_input_nodes=2, n_hidden_nodes=8, n_output_nodes=1):
     
     weights_1 = np.random.rand(n_hidden_nodes,n_input_nodes)-0.5
-    #print weights_1, len(weights_1)
-    
     weights_2 = np.random.rand(n_hidden_nodes)-0.5
     
-    
-    return weights_1, weights_2#, activations_hidden, activations_output
+    return weights_1, weights_2
     
 
 def run_nn():
-    x1_space = np.linspace(-2,2,40)
-    x2_space = np.linspace(-2,2,40)
+    x1_space = np.linspace(-2,2,20)
+    x2_space = np.linspace(-2,2,20)
     
     x_grid, y_grid = np.meshgrid(x1_space, x2_space)
     
     X = zip(np.ravel(x_grid),np.ravel(y_grid))
-    
-    y = np.array( [ex1_gaussian([x1,x2]) for x1,x2 in X])
-    Y = y
+    Y = np.array( [ex1_gaussian([x1,x2]) for x1,x2 in X])
         
     weights_1, weights_2 = create_nn()
     
-    
+    indices = range(len(X))
+    random.shuffle(indices)
+        
     for i in range(500):
+        
         outputs = np.zeros(Y.shape)
         
         
-        indices = range(len(X))
+        
 
-        for index in indices:
+        for n, index in enumerate(indices):
+            
             x = X[index]
-            y = Y[index]     
+            y = Y[index]    
             
             out, activation = forward_pass(weights_1, weights_2, x)
             outputs[index] = out
             weights_1, weights_2 = backpropagation(weights_1, weights_2, activation, out, target=y, x=x)
       
+        #print outputs
       
         if (i+1)%50 == 0:            
-            O = outputs.reshape(x_grid.shape)
-            plot_gaussian_given(x_grid, y_grid, O, "ex2_3_"+str(i+1))
+           # print Y.shape, outputs.shape, '---'
+           # print np.linalg.norm(Y - outputs)
+            plot_gaussian_given(x_grid, y_grid, outputs, "ex2_3_"+str(i+1))
         if (i+1)%10 == 0:
             print i
     
@@ -165,7 +165,6 @@ def run_nn():
 if __name__ == "__main__":
     np.random.seed(1)
     #plot_standard_gaussian()
-    
-    create_nn()
+
     run_nn()
     print "yes yes yes girl"
