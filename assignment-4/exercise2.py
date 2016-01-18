@@ -9,6 +9,7 @@ from matplotlib import cm
 from scipy.stats import multivariate_normal
 from mpl_toolkits.mplot3d import Axes3D
 import random
+from tqdm import tqdm
 
 
 #Gaussian
@@ -145,10 +146,10 @@ def run_nn():
     
     outputs = np.zeros(Y.shape)
     
-    for i in range(500):
+    for i in tqdm(range(500)):
         outputs = np.zeros(Y.shape)
         indices = range(len(X))
-        random.shuffle(indices)
+        #random.shuffle(indices)
         
         for n, index in enumerate(indices):
             x = X[index]
@@ -156,17 +157,14 @@ def run_nn():
             
             out, activation = forward_pass(weights_1, weights_2, x)
             outputs[index] = out
-            weights_1, weights_2 = backpropagation(weights_1, weights_2, activation, out, target=y, x=x, eta=0.01)
+            weights_1, weights_2 = backpropagation(weights_1, weights_2, activation, out, target=y, x=x, eta=0.1)
       
         if i == 0:
-            plot_gaussian_given(x_grid, y_grid, outputs, "ex2_2")
+            plot_gaussian_given(x_grid, y_grid, outputs, "ex2_2", elev=45, azim=45)
+        if i == 1:
+            plot_gaussian_given(x_grid, y_grid, outputs, "ex2_2_1", elev=45, azim=45)
         if (i+1)%50 == 0:            
-            plot_gaussian_given(x_grid, y_grid, outputs, "ex2_3_"+str(i+1))
-            
-        if (i+1)%10 == 0:
-            #print np.linalg.norm(Y - outputs)
-            print i
-    
+            plot_gaussian_given(x_grid, y_grid, outputs, "ex2_3_"+str(i+1), elev=45, azim=45)
 
 def run_nn_6():
     data = np.loadtxt('a017_NNpdfGaussMix.txt')
@@ -190,7 +188,7 @@ def run_nn_6():
     
     outputs = np.zeros(Y.shape)
     
-    for i in range(2000):
+    for i in tqdm(range(2000)):
         outputs = np.zeros(Y.shape)
         indices = range(len(X))
         random.shuffle(indices)
@@ -206,10 +204,6 @@ def run_nn_6():
       
         if (i+1)%50 == 0:            
             plot_gaussian_given(x_grid, y_grid, outputs, "plot/ex2_6_alt"+str(i+1), elev=65, azim=45)
-            
-        if (i+1)%10 == 0:
-            #print np.linalg.norm(Y - outputs)
-            print i
 
 if __name__ == "__main__":
     np.random.seed(1)
