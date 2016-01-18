@@ -146,10 +146,11 @@ def run_nn():
     
     outputs = np.zeros(Y.shape)
     
+    indices = range(len(X))
+    random.shuffle(indices)
+    
     for i in tqdm(range(500)):
         outputs = np.zeros(Y.shape)
-        indices = range(len(X))
-        random.shuffle(indices)
         
         for n, index in enumerate(indices):
             x = X[index]
