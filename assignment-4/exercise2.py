@@ -158,7 +158,8 @@ def run_nn():
             outputs[index] = out
             weights_1, weights_2 = backpropagation(weights_1, weights_2, activation, out, target=y, x=x, eta=0.01)
       
-      
+        if i == 0:
+            plot_gaussian_given(x_grid, y_grid, outputs, "ex2_2")
         if (i+1)%50 == 0:            
             plot_gaussian_given(x_grid, y_grid, outputs, "ex2_3_"+str(i+1))
             
@@ -185,7 +186,7 @@ def run_nn_6():
     
     X = zip(np.ravel(x_grid),np.ravel(y_grid))
     
-    weights_1, weights_2 = create_nn(n_hidden_nodes=60, )
+    weights_1, weights_2 = create_nn(n_hidden_nodes=80, )
     
     outputs = np.zeros(Y.shape)
     
@@ -200,11 +201,11 @@ def run_nn_6():
             
             out, activation = forward_pass(weights_1, weights_2, x)
             outputs[index] = out
-            weights_1, weights_2 = backpropagation(weights_1, weights_2, activation, out, target=y, x=x, eta=0.001)
+            weights_1, weights_2 = backpropagation(weights_1, weights_2, activation, out, target=y, x=x, eta=0.0001)
       
       
         if (i+1)%50 == 0:            
-            plot_gaussian_given(x_grid, y_grid, outputs, "plot/ex2_6_"+str(i+1), elev=65, azim=45)
+            plot_gaussian_given(x_grid, y_grid, outputs, "plot/ex2_6_alt"+str(i+1), elev=65, azim=45)
             
         if (i+1)%10 == 0:
             #print np.linalg.norm(Y - outputs)
@@ -214,9 +215,9 @@ if __name__ == "__main__":
     np.random.seed(1)
     #plot_standard_gaussian()
 
-    #run_nn()
+    run_nn()
     
-    run_nn_6()
+    #run_nn_6()
     
     
     print "yes yes yes girl"
