@@ -142,7 +142,7 @@ def run_nn():
     X = zip(np.ravel(x_grid),np.ravel(y_grid))
     Y = np.array( [ex1_gaussian([x1,x2]) for x1,x2 in X])
         
-    weights_1, weights_2 = create_nn()
+    weights_1, weights_2 = create_nn(n_hidden_nodes=16)
     
     outputs = np.zeros(Y.shape)
     
@@ -165,10 +165,10 @@ def run_nn():
         #if i == 1:
         #    plot_gaussian_given(x_grid, y_grid, outputs, "ex2_2_1", elev=45, azim=45)
         if (i+1)%50 == 0:            
-            plot_gaussian_given(x_grid, y_grid, outputs, "ex2_4_"+str(i+1), elev=45, azim=45)
+            plot_gaussian_given(x_grid, y_grid, outputs, "ex2_4h_"+str(i+1), elev=45, azim=45)
             
         if (i+1)%10 == 0 and i < 101:
-            plot_gaussian_given(x_grid, y_grid, outputs, "ex2_4_"+str(i+1), elev=45, azim=45)
+            plot_gaussian_given(x_grid, y_grid, outputs, "ex2_4h_"+str(i+1), elev=45, azim=45)
 
 def run_nn_6():
     data = np.loadtxt('a017_NNpdfGaussMix.txt')
