@@ -159,6 +159,7 @@ def EM(K, x1, x2, x3, x4):
         scatter_one_class(c1,c2,"$x_1$","$x_2$","ex3plots/class_"+str(K)+"_"+str(i+1), color=color, label='class '+str(class_number))        
         
         print "Class ", class_number, "corrcoef:", np.corrcoef(c1,c2)
+        print "Size: ", len(c), "fraction:", len(c)/N
                 
         
 
@@ -169,8 +170,8 @@ if __name__ == "__main__":
     x2 = np.array(x2)
     x3 = np.array(x3)
     x4 = np.array(x4)
-    
-    EM(2, x1, x2, x3, x4)
+    np.random.seed(0)
+    EM(4, x1, x2, x3, x4)
     
     #print X
     #plot_hist(X)
