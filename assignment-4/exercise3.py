@@ -20,7 +20,7 @@ def plot_hist(X):
 
     for i,(data,color) in enumerate(zip([x1,x2,x3,x4],['pink','orange','red','white'])):
         i+=1
-        #Plot
+
         fig = plt.figure(0)
         
         linewidth = 0.3        
@@ -28,12 +28,9 @@ def plot_hist(X):
             linewidth = 0.1
             
         plt.hist(data, 24, alpha=0.85, facecolor=color,linewidth=linewidth, label=r'$x_{0}$'.format(i))
-        #plt.title("Isotropic 2D Gaussian")
         plt.xlabel(r'$value$')
         plt.ylabel(r'$frequency$')
-        #plt.colorbar(surf, shrink=1,aspect=30)
         plt.legend(loc='upper right')
-        #fig.set_size_inches(8,5)
         fig.savefig("hist_x", dpi=100)    
 
 
@@ -63,6 +60,8 @@ def scatter_one_class(x,y,xlabel='$x$',ylabel='$Xy$',name="", color='green', lab
 
 
 def log_likelihood(X, means, covariances, pis):
+    X = np.copy(X)
+    
     llh = 0
     K = len(means)
     for x in X:
@@ -73,6 +72,21 @@ def log_likelihood(X, means, covariances, pis):
         llh += np.log(sk)
         
     return llh
+
+def likelihood(X, means, covariances, pis):
+    X = np.copy(X)
+    
+    lh = 0
+    K = len(means)
+    for x in X:
+        sk = 0
+        for k in range(K):        
+            #print pis[k]
+            sk+=pis[k] * multivariate_normal.pdf(x, means[k], covariances[k])
+        lh += sk
+        
+    return lh
+
 
 
 def EM(K, x1, x2, x3, x4):
@@ -140,7 +154,7 @@ def EM(K, x1, x2, x3, x4):
             
         print "Iteration {0},\t log likelihood {1}".format(iteration_number, llh)        
         
-        
+    
     classifications = [[] for k in range(K)] #
     for x in X:
         probabilities = [multivariate_normal.pdf(x, means[k], covariances[k]) for k in range(K)]
@@ -160,18 +174,39 @@ def EM(K, x1, x2, x3, x4):
         
         print "Class ", class_number, "corrcoef:", np.corrcoef(c1,c2)
         print "Size: ", len(c), "fraction:", len(c)/N
-                
+    
+    return means, covariances, pis
         
 
 if __name__ == "__main__":
+    
     X = np.loadtxt('a011_mixdata.txt')
+    
     x1, x2, x3, x4 = zip(*X)
     x1 = np.array(x1)
     x2 = np.array(x2)
     x3 = np.array(x3)
     x4 = np.array(x4)
+    
     np.random.seed(0)
-    EM(4, x1, x2, x3, x4)
+    
+    K = 4
+    means, covariances, pis = EM(K, x1, x2, x3, x4)
+    
+    samples = [[11.85, 2.2, 0.5, 4.0], 
+               [11.95, 3.1, 0.0, 1.0],
+               [12.00, 2.5, 0.0, 2.0],
+               [12.00, 3.0, 1.0, 6.3]]   
+               
+    likelihoods = [likelihood([s], means, covariances, pis) for s in samples]
+               
+    #classifications = [[] for k in range(K)] #
+    for i, (s,lh) in enumerate(zip(samples, likelihoods)):
+        probabilities = [multivariate_normal.pdf(s, means[k], covariances[k]) for k in range(K)]
+        classification = np.argmax(probabilities)
+        print "\nsubject",i, "\t",s
+        print "classification ", classification, "\t", probabilities 
+        print "likelihood", lh
     
     #print X
     #plot_hist(X)
