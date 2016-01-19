@@ -131,14 +131,15 @@ def EM(K, x1, x2, x3, x4):
         
         N = len(x)
         D = X.shape[1]
-        #M step
         
+        #M step
         for k in range(K):          
             
             sum_gamma_x = np.zeros(D)
             for n in xrange(N):
                 sum_gamma_x += gammas[k,n] * X[n] 
                 
+            #Update means
             means[k] = (1/gamma_sums[k]) * sum_gamma_x
             
             sum_gamma_dist = np.zeros((D,D))
@@ -146,8 +147,10 @@ def EM(K, x1, x2, x3, x4):
             for n in xrange(N):
                 sum_gamma_dist += gammas[k,n] * ( np.multiply(np.matrix(X[n]-means[k]), np.matrix(X[n]-means[k]).T))
             
-            
+            #Update covariances
             covariances[k] = (1/gamma_sums[k]) * sum_gamma_dist
+            
+            #Update pi values
             pis[k] = gamma_sums[k] / N
             
         llh = log_likelihood(X,means,covariances,pis)
