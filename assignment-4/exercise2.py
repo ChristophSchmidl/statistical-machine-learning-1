@@ -27,13 +27,10 @@ def plot_gaussian(data_function, a_space, b_space, name):
     #Plot
     fig = plt.figure(0)
     ax = fig.add_subplot(111, projection='3d')
-    #plt.title("Isotropic 2D Gaussian")
     plt.xlabel(r'$x_1$')
     plt.ylabel(r'$x_2$')
     
     surf = ax.plot_surface(X,Y, Z, cmap=cm.winter, linewidth=0.05,rstride=2, cstride=2)
-    
-    #plt.colorbar(surf, shrink=1,aspect=30)
     
     fig.set_size_inches(10,7)
     fig.savefig(name, dpi=100)
@@ -45,12 +42,10 @@ def plot_gaussian_given(X, Y, Z, name, elev=45, azim=0):
     #Plot
     fig = plt.figure(0)
     ax = fig.add_subplot(111, projection='3d')
-    #plt.title("Isotropic 2D Gaussian")
     plt.xlabel(r'$x_1$')
     plt.ylabel(r'$x_2$')
     surf = ax.plot_surface(X,Y, Z, cmap=cm.winter, linewidth=0.05,rstride=2, cstride=2)
     ax.view_init(elev=elev, azim=azim)
-    #plt.colorbar(surf, shrink=1,aspect=30)
     
     fig.set_size_inches(10,7)
     fig.savefig(name, dpi=100)    
@@ -69,7 +64,6 @@ def forward_pass(w1, w2, X):
     
     X_with_bias = list(X) + [1]
     
-    
     activations_hidden = []#np.zeros((len(w1),))
     
     for W in w1:
@@ -78,8 +72,7 @@ def forward_pass(w1, w2, X):
         
     #BIAS!
     activations_hidden += [1]
-    #print activations_hidden, w2
-   # np.dot(activations_hidden, w2)
+    
     output = np.sum( np.dot(activations_hidden, w2))
     return output, activations_hidden 
     
@@ -132,7 +125,7 @@ def create_nn(n_input_nodes=2, n_hidden_nodes=8, n_output_nodes=1):
     
     return weights_1, weights_2
     
-
+#Network for part 2, 3, 4 (minor edits to code required for changing settings)
 def run_nn():
     x1_space = np.linspace(-2,2,40)
     x2_space = np.linspace(-2,2,40)
@@ -170,6 +163,8 @@ def run_nn():
         if (i+1)%10 == 0 and i < 101:
             plot_gaussian_given(x_grid, y_grid, outputs, "ex2_4lh_"+str(i+1), elev=45, azim=45)
 
+
+#Network for part 6
 def run_nn_6():
     data = np.loadtxt('a017_NNpdfGaussMix.txt')
     _x1, _x2, y = zip(*data)
@@ -212,7 +207,6 @@ def run_nn_6():
 if __name__ == "__main__":
     np.random.seed(1)
     #plot_standard_gaussian()
-
     #run_nn()
     
     run_nn_6()

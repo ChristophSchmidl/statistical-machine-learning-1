@@ -8,10 +8,6 @@ from matplotlib import pyplot as plt
 from matplotlib import cm
 from scipy.stats import multivariate_normal
 from mpl_toolkits.mplot3d import Axes3D
-import random
-from tqdm import tqdm
-
-
 
 
 def plot_hist(X):
@@ -87,8 +83,6 @@ def likelihood(X, means, covariances, pis):
         
     return lh
 
-
-
 def EM(K, x1, x2, x3, x4):
     X = zip(x1,x2,x3,x4)
     X = np.array(X)
@@ -133,6 +127,7 @@ def EM(K, x1, x2, x3, x4):
         D = X.shape[1]
         
         #M step
+        
         for k in range(K):          
             
             sum_gamma_x = np.zeros(D)
