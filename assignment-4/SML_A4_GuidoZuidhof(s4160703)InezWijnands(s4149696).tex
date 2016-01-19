@@ -110,7 +110,7 @@ bindingoffset=0mm, top=20mm,bottom=20mm}
 
 \maketitle
 
-\noindent \textit{The entire code listing is included in the zip-file. The listings shown here are merely code snippets}.\vspace{-0.5cm}
+\noindent \textit{The entire code listing is included in the zip-file.}.\vspace{-0.5cm}
 \section{Neural networks}
 \begin{enumerate}
 	\item Since all the weights have the same update function, if all the weights are $0$,  after the updates they will still remain the same as the other weights. This way you don't break the symmetry when backpropagating.
@@ -463,7 +463,126 @@ The weights of either approach do not have to end up with the same final weight 
    			\caption{\vspace{-0.1cm} Examples of handwritten digits in the dataset, binary images displayed in a happy springy colormap.}\vspace{-0.2cm}
   		\end{figure}
 		We would need class prototypes that represent the different ways of writing the same number. As shown in Figure 4.1, this might prove to be difficult, since some people write a $2$ with a small loop at the bottom, or even at the top, while others do not. The number $3$ can be really round, or more like a straight banana-shape. The number $4$ can be either open or closed at the top. These different handwritings may complicate dividing the images into classes. However, with the right prototypes, we think at least most of the numbers can be classified correctly, because there are also more consistent differences.
-	\item 
+	\item \begin{figure}[h!]
+			\centering
+			\begin{subfigure}[b]{0.26\textwidth}
+				\includegraphics[width=\textwidth]{digits/0_k3_class0.png}\vspace{-0.4cm}
+				\caption{$\mu$ of $k=0$ after $i=1$.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.26\textwidth}
+				\includegraphics[width=\textwidth]{digits/0_k3_class1.png}\vspace{-0.4cm}
+				\caption{$\mu$ of $k=1$ after $i=1$.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.26\textwidth}
+				\includegraphics[width=\textwidth]{digits/0_k3_class2.png}\vspace{-0.4cm}
+				\caption{$\mu$ of $k=2$ after $i=1$.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.26\textwidth}
+				\includegraphics[width=\textwidth]{digits/14_k3_class0.png}\vspace{-0.4cm}
+				\caption{$\mu$ of $k=0$ after $i=15$.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.26\textwidth}
+				\includegraphics[width=\textwidth]{digits/14_k3_class1.png}\vspace{-0.4cm}
+				\caption{$\mu$ of $k=1$ after $i=15$.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.26\textwidth}
+				\includegraphics[width=\textwidth]{digits/14_k3_class2.png}\vspace{-0.4cm}
+				\caption{$\mu$ of $k=2$ after $i=15$.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.26\textwidth}
+				\includegraphics[width=\textwidth]{digits/39_k3_class0.png}\vspace{-0.4cm}
+				\caption{$\mu$ of $k=0$ after $i=40$.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.26\textwidth}
+				\includegraphics[width=\textwidth]{digits/39_k3_class1.png}\vspace{-0.4cm}
+				\caption{$\mu$ of $k=1$ after $i=40$.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.26\textwidth}
+				\includegraphics[width=\textwidth]{digits/39_k3_class2.png}\vspace{-0.4cm}
+				\caption{$\mu$ of $k=2$ after $i=40$.}
+			\end{subfigure}
+   			\caption{\vspace{-0.1cm} The means $\mu$ of the classes $k$ after a number of iterations $i$.}\vspace{-0.2cm}
+  		\end{figure}
+		The algorithm converges really fast, after only 5 iterations the three means of the classes already start to resemble the numbers 2, 3 and 4, and after 15 iterations the three means do not change that much. Only the number 2, which with this seed (since the initial weights are randomized, the classes can differ a bit when using a different seed) contains a loop at the left lower corner, stabilizes a bit later than the numbers 3 and 4. In other seeds, the class for the number 2 sometimes converges faster, if the mean does not contain the loop.
+	\item \begin{figure}[h!]
+   			\centering
+   			\includegraphics[width=0.4\textwidth]{digits/confusion.png}\vspace{-0.4cm}
+   			\caption{\vspace{-0.1cm} Confusion matrix.}\vspace{-0.2cm}
+  		\end{figure}
+		See Figure 4.2 for typical results of the EM-algorithm on the digit data set. In Figure 4.3 is shown which classes are typically classified as which class. As you can see, typically the number 2 is hardest to classify, as we predicted. When we compared the predicted with the true labels, we obtained an accuracy of 0.895. 
+
+	\item \begin{figure}[h!]
+			\centering
+			\begin{subfigure}[b]{0.24\textwidth}
+				\includegraphics[width=\textwidth]{digits/39_k4_class0.png}\vspace{-0.4cm}
+				\caption{$\mu$ of $k=0$ after $i=40$.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.24\textwidth}
+				\includegraphics[width=\textwidth]{digits/39_k4_class1.png}\vspace{-0.4cm}
+				\caption{$\mu$ of $k=1$ after $i=40$.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.24\textwidth}
+				\includegraphics[width=\textwidth]{digits/39_k4_class2.png}\vspace{-0.4cm}
+				\caption{$\mu$ of $k=2$ after $i=40$.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.24\textwidth}
+				\includegraphics[width=\textwidth]{digits/39_k4_class3.png}\vspace{-0.4cm}
+				\caption{$\mu$ of $k=3$ after $i=40$..}
+			\end{subfigure}
+   			\caption{\vspace{-0.1cm} The means $\mu$ of the classes $k$ with $K = 4$ after 40 iterations $i$.}\vspace{-0.2cm}
+  		\end{figure}
+		If we use 4 classes, we typically see that the number 2 is split into two classes, one with loops (e.g. Figure 4.1(b)) and one with more straight lines (e.g. Figure 4.1(a)). The other two classes still resemble the number 3 and the number 4.
+
+		\begin{figure}[h]
+			\centering
+			\begin{subfigure}[b]{0.24\textwidth}
+				\includegraphics[width=\textwidth]{digits/39_k2_class0.png}\vspace{-0.4cm}
+				\caption{$\mu$ of $k=0$ after $i=40$.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.24\textwidth}
+				\includegraphics[width=\textwidth]{digits/39_k2_class1.png}\vspace{-0.4cm}
+				\caption{$\mu$ of $k=1$ after $i=40$.}
+			\end{subfigure}
+   			\caption{\vspace{-0.1cm} The means $\mu$ of the classes $k$ with $K = 2$ after 40 iterations $i$.}\vspace{-0.2cm}
+  		\end{figure}
+
+		If we use only 2 classes, we notice that the class that resembles the number 4 remains almost the same, but the classes for the numbers 2 and 3 seem to merge. This is probably due to the similarities of the upper part of the numbers 2 and 3, and the uniqueness of having only a small vertical line at the right lower corner of the number 4 where the numbers 2 and 3, although different from each other, do occupy more space at the left lower corner. You see that the second class is mostly like the number 3, although there is a light diagonal line from the center to the left lower corner which is typically present in the number 2.
+		\begin{figure}[h]
+			\centering
+			\begin{subfigure}[b]{0.24\textwidth}
+				\centering
+				\includegraphics[width=0.6\textwidth]{digits/true2.png}\vspace{-0.4cm}
+				\caption{Two.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.24\textwidth}
+				\centering
+				\includegraphics[width=0.6\textwidth]{digits/true3.png}\vspace{-0.4cm}
+				\caption{Three.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.24\textwidth}
+				\centering
+				\includegraphics[width=0.6\textwidth]{digits/true4.png}\vspace{-0.4cm}
+				\caption{Four.}
+			\end{subfigure}
+   			\caption{\vspace{-0.1cm} The true means classes of numbers 2, 3 and 4.}\vspace{-0.2cm}
+  		\end{figure}
+
+		If we initialize the means of the classes as the true means (the means are depicted in Figure 4.6), we obtain an accuracy of 0.955. The confusion matrix is shown in Figure 4.7. There is less uncertainty in predicting class 2 now.
+		\begin{figure}[h!]
+   			\centering
+   			\includegraphics[width=0.3\textwidth]{digits/confusion_perfect.png}\vspace{-0.4cm}
+   			\caption{\vspace{-0.1cm} Confusion matrix using true means as initial means.}\vspace{-0.2cm}
+  		\end{figure}
+\vfill
+
+	\item \begin{figure}[h]
+   			\centering
+   			\includegraphics[width=0.144\textwidth]{digits/mydigit.png}\vspace{-0.4cm}
+   			\caption{\vspace{-0.1cm} Our own handwritten digit image}\vspace{-0.2cm}
+  		\end{figure}
+		It is classified in the class that resembles the number 4, as it should be. Thus, the EM-algorithm classifies our image correctly.
+		
+\vfill
 		
 \end{enumerate}
 
