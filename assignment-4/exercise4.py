@@ -2,9 +2,11 @@
 # Guido Zuidhof s4160703
 # Iñez Wijnands s4149696
 # SML ASS 4 exercise4.py
+from __future__ import division
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, accuracy_score
+from scipy.misc import imread
 
 def load_data():
     N=800
@@ -27,7 +29,6 @@ def load_labels():
             
     return X
 
-
 def plot_image(im, name=None):
     cmap = plt.cm.get_cmap('spring')
     fig = plt.figure(name)
@@ -37,7 +38,6 @@ def plot_image(im, name=None):
     if not name is None:
         fig.savefig("digits/"+name, dpi=100) 
     
-
 def log_likelihood(data, mu, pi):
     K = len(mu)
     return np.sum(np.log([np.sum([pi[k] * bernoulli(x, mu[k]) for k in range(0, K)]) for x in data]))
@@ -59,21 +59,6 @@ def log_likelihood2(X, means, pis):
     #print "llh,means,pis", llh, means, pis
     return llh
 
-
-def likelihood(X, means, pis):
-    X = np.copy(X)
-    
-    lh = 0
-    K = len(means)
-    for x in X:
-        sk = 0
-        for k in range(K):        
-            #print pis[k]
-            sk+=pis[k] * bernoulli(x, means[k])
-        lh += sk
-        
-    return lh
-
 def bernoulli(x, mu):
     return np.product(mu**x * (1-mu)**(1-x))
 
@@ -86,9 +71,6 @@ def plot_confusion_matrix(cm, cmap=plt.cm.spring,K=3):
     plt.tight_layout()
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
-
-
-
 
 def EM(K, X, L, n_iterations=40):
     means = []    
@@ -103,8 +85,8 @@ def EM(K, X, L, n_iterations=40):
         
     means = np.array([np.ravel(np.random.rand(X.shape[1])*0.5 + 0.25) for _ in range(0, K)])
     
-    #True labels
-    means = label_means(K,X,L)        
+    #True labels, comment for random
+    #means = label_means(K,X,L)        
         
     pis = np.repeat(1. / K, K)
     
@@ -143,9 +125,6 @@ def EM(K, X, L, n_iterations=40):
     for x in X:
         probabilities = [bernoulli(x, means[k]) for k in range(K)]
         classifications.append(np.argmax(probabilities))
-        #classifications[classification].append(x)
-    
-    
     
     #Prompt user for the labels of found classes
     while(True):
@@ -159,24 +138,18 @@ def EM(K, X, L, n_iterations=40):
     
     classifications = [labels[c] for c in classifications]
     
-    print accuracy_score(L, classifications)
+    print "accuracy:", accuracy_score(L, classifications)
+    
     conf_matrix = confusion_matrix(L, classifications)
-    #Normalize
+    
+    #Normalize confusion matrix
     conf_matrix = conf_matrix.astype('float') / conf_matrix.sum(axis=1)[:, np.newaxis]
     
     plot_confusion_matrix(conf_matrix)
     
-   # for class_number, (c, color) in enumerate(zip(classifications, colors)):
-        
-   #     c1, c2, c3, c4 = zip(*c)  
-   #     scatter_one_class(c1,c2,"$x_1$","$x_2$","ex3plots/class_"+str(K)+"_"+str(i+1), color=color, label='class '+str(class_number))        
-   #     
-    #    print "Class ", class_number, "corrcoef:", np.corrcoef(c1,c2)
-   ##     print "Size: ", len(c), "fraction:", len(c)/N
-    
     return means, pis
 
-
+#Calculate the mean per label
 def label_means(K, X, L):
     N = X.shape[1]    
     
@@ -194,7 +167,13 @@ def label_means(K, X, L):
     
     return means
     
-
+def my_digit_is(K,means, my_digit):
+    plot_image(my_digit,"mydigitspring")
+    dist = [bernoulli(my_digit, means[k]) for k in range(K)]
+    print dist
+    class_number = np.argmax(dist)
+    print "Your digit is class", class_number
+    
 if __name__ == "__main__":
     X = load_data()
     L = load_labels()
@@ -206,4 +185,9 @@ if __name__ == "__main__":
     #Plot real means
     #map(plot_image, means)
       
-    EM(K, X, L, n_iterations=40)
+    means, pis = EM(K, X, L, n_iterations=40)
+    
+    my_digit = (255-np.ravel(imread('mydigit.png', True), order='F'))/255    
+    my_digit_is(K,means, my_digit)
+    
+     
