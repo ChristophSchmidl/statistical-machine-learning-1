@@ -380,20 +380,91 @@ The weights of either approach do not have to end up with the same final weight 
 			\end{subfigure}
    			\caption{\vspace{-0.1cm} Scatter plot of data points on axes $x_1$ and $x_2$.}\vspace{-0.2cm}
   		\end{figure}
-		We think there are 3-4 classes, as far as we can tell from the scatter plots in Figure 3.2. The histograms in Figure 3.1 also show that the data can be devided into 4 clusters that resemble a Gaussian distribution. In Figure 3.3 our estimation of the clusters is shown. We chose these clusters because these are groups of similar sample size, with different densities but the same distance between data points within each group. In the smallest group, the most dense, there is a strong positive correlation between $x_1$ and $x_2$, and we believe this is the group of athletes that have substance 'X' in their blood.
+		The histograms in Figure 3.1 show the distribution of each variable. We think there are 3-4 classes, as far as we can tell from the scatter plots in Figure 3.2. In Figure 3.3 our estimation of the clusters is shown. We chose these clusters because these are groups of similar sample size, with different densities but the same distance between data points within each group. In the smallest group, the most dense, there is a strong positive correlation between $x_1$ and $x_2$, and we believe this is the group of athletes that have substance X in their blood.
 		\begin{figure}[h!]
    			\centering
    			\includegraphics[width=0.44\textwidth]{scatter_x3plusx4_clusters.png}\vspace{-0.6cm}
    			\caption{\vspace{-0.1cm} Figure 3.2(c) with our estimation of the class distributions drawn over it.}\vspace{-0.2cm}
   		\end{figure}
-	\item 
+	\item The EM algorithm is divided in the following steps:
+		\begin{enumerate}
+			\item Set initial values: $K$, $\pi_k$, $\boldsymbol{\mu}_k$, $\boldsymbol{\Sigma}_k$ and evaluate the initial value for the log likelihood.
+			\item \textbf{E step}: \begin{equation*}
+							\gamma(z_{nk}) = \frac{\pi_k \mathcal{N}(\boldsymbol{x}_n \big\vert \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)}{\sum_{j=1}^K \pi_j \mathcal{N}(\boldsymbol{x}_n \big\vert \boldsymbol{\mu}_j, \boldsymbol{\Sigma}_j)}
+							\end{equation*}
+			\item \textbf{M step:} Re-estimate parameters:
+				\begin{align*} 
+				\boldsymbol{\mu}_k^{\text{new}} &= \frac{1}{N_k} \sum_1^N \gamma(z_{nk}) \boldsymbol{x}_n\\
+				\boldsymbol{\Sigma}_k^{\text{new}} &= \frac{1}{N_k} \sum_1^N \gamma(z_{nk} (\boldsymbol{x}_n - \boldsymbol{\mu}_k^{\text{new}}) (\boldsymbol{x}_n - \boldsymbol{\mu}_k^{\text{new}})^T\\
+				\pi_k^{\text{new}} &= \frac{N_k}{N}\\
+				\text{where} \hspace{0.6cm} &\\
+				N_k &= \sum_1^N \gamma(z_{nk})
+				\end{align*}
+			\item Evaluate the log likelihood:
+				\begin{equation*}
+				\ln p(\boldsymbol{X} \big\vert \boldsymbol{\mu}, \boldsymbol{\Sigma}, \boldsymbol{\pi}) = \sum_1^N \ln \bigg\{ \sum_1^K \pi_k \mathcal{N}(\boldsymbol{x}_n \big\vert \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k) \bigg\}
+				\end{equation*}
+		\end{enumerate}
+	\item \begin{figure}[h!]
+   			\centering
+   			\includegraphics[width=0.6\textwidth]{ex3plots/class_2_100.png}\vspace{-0.6cm}
+   			\caption{\vspace{-0.1cm} Scatter plot of data points colored according to most probable component, $K = 2$.}\vspace{-0.2cm}
+  		\end{figure}
+		The correlation coefficients:
+		\begin{equation*}
+			\rho_{12} = \frac{\text{cov}[x_1,x_2]}{\sqrt{\text{var}[x_1]\text{var}[x_2]}}
+		\end{equation*}
+		of the components are -0.5244 for class 0 and 0.1338 for class 1. None of these show the characteristic positive correlation for $\{x_1,x_2\}$. Different initializations do not alter the classes much, all cases we got similar clusters.
+	\item \begin{figure}[h!]
+   			\centering
+   			\includegraphics[width=0.6\textwidth]{ex3plots/class_3_100.png}\vspace{-0.6cm}
+   			\caption{\vspace{-0.1cm} Scatter plot of data points colored according to most probable component, $K = 3$.}\vspace{-0.2cm}
+  		\end{figure}
+		The correlation coefficients of the components are 0.0005 for class 0, 0.1146 for class 1 and -0.7181 for class 2. None of these show the characteristic positive correlation for $\{x_1,x_2\}$.
+		\begin{figure}[h!]
+   			\centering
+   			\includegraphics[width=0.6\textwidth]{ex3plots/class_4_100.png}\vspace{-0.6cm}
+   			\caption{\vspace{-0.1cm} Scatter plot of data points colored according to most probable component, $K = 4$.}\vspace{-0.2cm}
+  		\end{figure}
+		The correlation coefficients of the components are -0.9102 for class 0, 0.9102 for class 1, 0.0495 for class 2 and -0.1077 for class 3. Class 1 displays the characteristic positive correlation for $\{x_1,x_2\}$. There are 453 data points in class 1, which corresponds to 22.65\% and thus around 1 in 5 users. We deem the rumoured 1-in-5 estimate for users of X credible.
+	\item Subject C is classified in class 1, which corresponds to the group of users of X. Subjects A and D are both classified in class 2, which is the largest group of users. Subject B is classified in class 0, the class with the strong negative correlation. We calculated the likelihoods for every subject, and found that while A, C and D had small probabilities for three classes but a high probability for the class they were put in, and corresponding with this also a likelihood of around 0.1-0.2, subject B was substantially different. Subject B had small probabilities for all classes, and a likelihood of 0.0000009, incredibly small, and was thus hard to classify. This is why we conclude that subject B is most likely the fraud.
 \end{enumerate}
 
 %\vfill
 
 \section{Handwritten digit recognition}
 \begin{enumerate}
-	\item
+	\item \begin{figure}[h!]
+			\centering
+			\begin{subfigure}[b]{0.26\textwidth}
+				\includegraphics[width=\textwidth]{digits/normaletwee.png}\vspace{-0.4cm}
+				\caption{A two.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.26\textwidth}
+				\includegraphics[width=\textwidth]{digits/cooletwee.png}\vspace{-0.4cm}
+				\caption{A different two.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.26\textwidth}
+				\includegraphics[width=\textwidth]{digits/skondrie.png}\vspace{-0.4cm}
+				\caption{A three.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.26\textwidth}
+				\includegraphics[width=\textwidth]{digits/rare3.png}\vspace{-0.4cm}
+				\caption{A sloppy written three.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.26\textwidth}
+				\includegraphics[width=\textwidth]{digits/via.png}\vspace{-0.4cm}
+				\caption{A four.}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.26\textwidth}
+				\includegraphics[width=\textwidth]{digits/dichtvier.png}\vspace{-0.4cm}
+				\caption{A different four.}
+			\end{subfigure}
+   			\caption{\vspace{-0.1cm} Examples of handwritten digits in the dataset, binary images displayed in a happy springy colormap.}\vspace{-0.2cm}
+  		\end{figure}
+		We would need class prototypes that represent the different ways of writing the same number. As shown in Figure 4.1, this might prove to be difficult, since some people write a $2$ with a small loop at the bottom, or even at the top, while others do not. The number $3$ can be really round, or more like a straight banana-shape. The number $4$ can be either open or closed at the top. These different handwritings may complicate dividing the images into classes. However, with the right prototypes, we think at least most of the numbers can be classified correctly, because there are also more consistent differences.
+	\item 
+		
 \end{enumerate}
 
 \end{document}
